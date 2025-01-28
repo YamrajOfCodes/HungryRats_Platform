@@ -1,101 +1,155 @@
-import Image from "next/image";
+"use client"
+import Footer from '@/Components/Footer/Footer';
+import Header from '@/Components/Header/Header';
+import Hero from '@/Components/hero/Hero';
+import Loginpopup from '@/Components/LoginPopup/Loginpopup';
+import { trackFallbackParamAccessed } from 'next/dist/server/app-render/dynamic-rendering';
+import Image from 'next/image';
+import React, { useState } from 'react';
+import food from "@/Assets/food.jpg"
+import { CheckCircle, ShoppingCart, X, Zap } from 'lucide-react';
 
-export default function Home() {
+
+const page = () => {
+
+  const [showloginpopup,setloginpopup] = useState(false);
+  const [showsignuppopup,setsignuppopup] = useState(false);
+  const [popup,setpopup] = useState("signup")
+  const [cartsidebar,setcartSidebar] = useState(false);
+  const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
+
+
+  const handlecartSidebar = ()=>{
+    setcartSidebar(true)
+  }
+
+  const handleLoginpopup = (e:any)=>{
+    setpopup("login")
+    setloginpopup(true);
+      document.body.classList.add('overflow-hidden');
+  }
+
+  const handleSignuppopup = (e:any)=>{
+    setpopup("signup")
+    setsignuppopup(true);
+      document.body.classList.add('overflow-hidden');
+  }
+
+
+  const hideLoginpopup = (e:any)=>{
+    setloginpopup(false);
+    setsignuppopup(false)
+      document.body.classList.remove('overflow-hidden');
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className='bg-blue-50'>
+   <div className='relative'>
+   <Header Showpopup={handleLoginpopup} Showsignup={handleSignuppopup} msg={false} cartsidebar={handlecartSidebar} />
+   </div>
+    <Hero/>
+    <Footer/>
+    <div className={`absolute flex justify-center top-0 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
+    <Loginpopup popup={popup} />
+    </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+
+    <div 
+      className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] 
+        ${cartsidebar ? "translate-x-0" : "translate-x-full"} 
+        transition-transform duration-500 ease-in-out z-50 
+        border-l-4 border-blue-500 shadow-2xl`}
+    >
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <ShoppingCart size={28} />
+            <h2 className="text-2xl font-bold">My Cart</h2>
+          </div>
+          <button
+            onClick={() => setcartSidebar(false)}
+            className="hover:rotate-90 transition-transform"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <X size={28} className="text-white/80 hover:text-white" />
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        {isSubscriptionActive && (
+          <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
+            <Zap size={20} className="text-yellow-300" />
+            <span className="text-sm font-medium flex-grow">
+              Premium Subscription Active
+            </span>
+            <CheckCircle size={20} className="text-green-300" />
+          </div>
+        )}
+      </div>
+
+      {/* Content Section */}
+      <div className="p-6">
+        <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center space-x-4">
+            <Image
+              src={food.src}
+              height={100}
+              width={100}
+              alt="cart image"
+              className="rounded-lg shadow-lg object-cover transform hover:scale-105 transition"
+            />
+            <div>
+              <p className="text-lg font-bold text-gray-800">Paneer Tikka</p>
+              <div className="flex items-center space-x-2">
+                <p className={`text-sm ${isSubscriptionActive ? 'text-gray-400 line-through' : 'text-gray-500'}`}>
+                  ₹75
+                </p>
+                {isSubscriptionActive && (
+                  <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs">
+                    Free
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              // logic to remove item
+            }}
+            className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* Info Section */}
+      <div className="px-6 text-center text-gray-600">
+        <p className="text-sm bg-blue-50 p-3 rounded-lg">
+          Subscription allows one meal delivery at a time
+        </p>
+      </div>
+
+      {/* Order Button */}
+      <div className="absolute bottom-0 left-0 right-0 p-6">
+        <button 
+          className={`w-full px-6 py-4 text-white text-lg font-bold rounded-xl 
+            transition-all duration-300 ease-in-out 
+            ${isSubscriptionActive 
+              ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
+              : 'bg-gray-400 cursor-not-allowed'
+            }`}
+          disabled={!isSubscriptionActive}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {isSubscriptionActive ? 'Order Now' : 'Activate Subscription'}
+        </button>
+      </div>
+    </div>
+
+
+  
+
     </div>
   );
-}
+};
+
+export default page;

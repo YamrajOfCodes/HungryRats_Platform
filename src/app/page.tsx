@@ -20,7 +20,7 @@ const page = () => {
 
 
   const handlecartSidebar = ()=>{
-    setcartSidebar(true)
+    setcartSidebar(!cartsidebar)
   }
 
   const handleLoginpopup = (e:any)=>{
@@ -29,14 +29,14 @@ const page = () => {
       document.body.classList.add('overflow-hidden');
   }
 
-  const handleSignuppopup = (e:any)=>{
+  const handleSignuppopup = ()=>{
     setpopup("signup")
     setsignuppopup(true);
       document.body.classList.add('overflow-hidden');
   }
 
 
-  const hideLoginpopup = (e:any)=>{
+  const hideLoginpopup = ()=>{
     setloginpopup(false);
     setsignuppopup(false)
       document.body.classList.remove('overflow-hidden');
@@ -50,7 +50,7 @@ const page = () => {
     <Hero/>
     <Footer/>
     <div className={`absolute flex justify-center top-0 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
-    <Loginpopup popup={popup} />
+    <Loginpopup popup={popup} hideloginpopup={hideLoginpopup} />
     </div>
 
 

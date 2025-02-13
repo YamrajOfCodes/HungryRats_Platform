@@ -5,22 +5,58 @@ import {
     Utensils, 
     Eye, 
     EyeOff, 
-    ArrowRight,
-    Apple,
-    Facebook
   } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Login, Register } from '@/Redux/Slices/User/userSlice'
+import { useAppDispatch } from '@/hooks';
+import { RootState } from '@/Redux/App/store';
+import toast from 'react-hot-toast';
 
 
   interface Popup{
-    popup:string
+    popup:string,
+    hideloginpopup:()=>void
+
   }
 
-const Loginpopup : React.FC<Popup> = ({popup}) => {
+const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
    const [showPassword, setShowPassword] = useState(false);
       const [email, setEmail] = useState('');
       const [password, setPassword] = useState('');
       const [active,setactive] = useState("");
+      const dispatch = useAppDispatch();
+      const { login } = useSelector((state:RootState)=>state.User);
 
+      console.log(login);
+      
+
+
+      const handleLogin = (e:any)=>{
+        e.preventDefault();
+        const data:any = {
+          email,
+          password
+        }
+
+        dispatch(Login(data)).then((res)=>{
+          if(res.payload){
+            setEmail("");
+            setPassword("");
+            console.log(res.payload.token);
+            localStorage.setItem("login",res.payload.token);
+            
+            toast.success("Login is successfull")
+            // window.location.reload();
+            setTimeout(() => {
+              hideloginpopup();
+            }, 1000);
+          }
+        });
+
+      }
+
+
+     
 
 
 
@@ -28,13 +64,13 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
       const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
+        Firstname: '',
+        Lastname: '',
         email: '',
-        phone: '',
+        mobile: '',
         address: '',
         password: '',
-        confirmPassword: ''
+        confirmpassword: ''
       });
 
 
@@ -45,13 +81,44 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
         });
       };
 
-      const [login,setlogin] = useState(true)
     
-      const handleSubmit = (e:any) => {
+    
+      const handleSubmit = (e:any)=>{
+
         e.preventDefault();
-        // Handle login logic here
-        console.log('Login attempted with:', { email, password });
-      };
+  
+         const {Firstname,Lastname,email,password,confirmpassword,mobile,address} = formData
+  
+          const data =  new FormData();
+          data.append("Firstname",Firstname);
+          data.append("Lastname",Lastname);
+          data.append("email",email);
+          data.append("mobile",mobile);
+          data.append("address",address);
+          data.append("password",password);
+          data.append("confirmpassword",confirmpassword);
+  
+          const config = {
+              "Content-Type":"multipart/formdata"
+            }
+            
+            const newdata = {
+              data,
+              config
+            }
+
+            console.log(formData);
+            
+  
+             dispatch(Register(formData)).then((res)=>{
+              if(res.payload){
+                setFormData({...formData,Firstname:"",Lastname:"",email:"",mobile:"",password:"",confirmpassword:"",address:""});
+                toast.success("Registration is successfull")
+                setactive("login")
+              }
+             })
+  
+    }
 
       const handlePropogation = (e:any)=>{
         e.stopPropagation();
@@ -131,6 +198,7 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
               <button
                 type="submit"
                 className="w-full bg-blue-600  hover:cursor-pointer text-white py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-colors"
+                onClick={handleLogin}
               >
                 Sign In
               </button>
@@ -217,8 +285,8 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
               </label>
               <input
                 type="text"
-                name="firstName"
-                value={formData.firstName}
+                name="Firstname"
+                value={formData.Firstname}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 placeholder="John"
@@ -232,8 +300,8 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
               </label>
               <input
                 type="text"
-                name="lastName"
-                value={formData.lastName}
+                name="Lastname"
+                value={formData.Lastname}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 placeholder="Doe"
@@ -241,6 +309,8 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
               />
             </div>
           </div>
+
+
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -263,8 +333,8 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
             </label>
             <input
               type="tel"
-              name="phone"
-              value={formData.phone}
+              name="mobile"
+              value={formData.mobile}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
               placeholder="+1 (555) 000-0000"
@@ -318,8 +388,8 @@ const Loginpopup : React.FC<Popup> = ({popup}) => {
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                name="confirmpassword"
+                value={formData.confirmpassword}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
                 placeholder="Confirm your password"

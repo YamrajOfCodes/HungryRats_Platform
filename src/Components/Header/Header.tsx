@@ -1,20 +1,76 @@
 "use client"
-import React, { useState } from 'react';
-import { Search, ShoppingCart, ArrowRight, HamIcon, Hammer, AlignJustify, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Search, ShoppingCart, ArrowRight, HamIcon, Hammer, AlignJustify, X, User, UserPlus, LogIn, Settings, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import MobileSidebar from '../MobileSidebar/MobileSidebar';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/Redux/App/store';
+import { useAppDispatch } from '@/hooks';
+import { Logout, userVerify } from '@/Redux/Slices/User/userSlice';
 
 interface Functions{
   Showpopup:(e:any)=>void,
-  Showsignup:(e:any)=>void,
+  Showsignup:any,
   msg:boolean,
   cartsidebar:()=>void
 }
 
+
 const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => {
+
+  const { login } = useSelector((state:RootState)=>state.User);
+
+  // console.log(login);
 
   const [sidebar, setSidebar] = useState(false);
   const handleSidebar = () => setSidebar(!sidebar);
+  const token  = localStorage.getItem("login");
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const { logout } = useSelector((state:RootState) => state.User);
+  // console.log(logout);
+  const { userverify  } = useSelector((state:RootState) => state.User);
+  // console.log(userverify);
+
+
+
+  
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+
+  const handleLogout = (e:any)=>{
+     e.preventDefault();
+     setIsDropdownOpen(false)
+     dispatch(Logout())
+  }
+
+
+  useEffect(()=>{
+    dispatch(userVerify())
+  },[login,logout])
+
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      // Save current scroll position and lock scroll
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${scrollY}px`;
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+  }, [isDropdownOpen]);
+
   return (
    <>
 
@@ -56,9 +112,58 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
           </button>
           
          
-          <button className="text-sm bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-all hover:scale-105 transform" onClick={Showsignup}>
-            Sign up
+          <div className="relative lg:block hidden">
+          <button 
+            onClick={toggleDropdown}
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <User className="h-5 w-5 text-white" />
           </button>
+          
+          {isDropdownOpen && (
+        <>
+          {/* Full height overlay with scroll lock */}
+          <div 
+            className="fixed inset-0 h-screen w-screen bg-black/20 backdrop-blur-sm z-40 overflow-hidden"
+            onClick={toggleDropdown}
+          />
+          
+          {/* Dropdown menu */}
+          <div 
+            className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg py-2 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-4 py-3 border-b border-gray-100">
+              <h3 className="text-sm font-medium text-gray-800">Account</h3>
+              <p className="text-xs text-gray-500 mt-1">Manage your account settings</p>
+            </div>
+            
+            <div className="py-2">
+              <button
+                onClick={() => {
+                  toggleDropdown();
+                  Showsignup();
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition-colors ${userverify?.[0]? 'hidden ' : "block"}`}
+              >
+                <UserPlus className="h-4 w-4 text-blue-500" />
+                <span>Sign up</span>
+              </button>
+              
+              <button
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition-colors ${userverify?.[0]? 'block ' : "hidden"}`} onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 text-red-500 font-semibold" />
+                <span className='text-red-500'>Log out</span>
+              </button>
+              
+            </div>
+            
+          </div>
+        </>
+      )}
+        </div>
           <AlignJustify className='text-white lg:hidden hover:cursor-pointer' onClick={handleSidebar} />
         </div>
       </nav>
@@ -73,7 +178,8 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
       </div>
 
       {/* Navigation Bar */}
-      <nav className="w-full flex justify-between items-center px-6 sm:px-12 py-4 border-b border-blue-400/20 backdrop-blur-sm">
+   
+      <nav className={`w-full flex justify-between bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 items-center px-6 sm:px-12 py-4 border-b border-blue-400/20 backdrop-blur-sm z-10 relative`}>
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-2 group">
           <div className="relative w-10 h-10">
@@ -82,15 +188,15 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
                 <span className="text-white font-bold text-xl -rotate-45">h</span>
               </div>
               </div>
-            <h1 className="text-2xl font-bold text-white">
+           <Link href={"/"}> <h1 className="text-2xl font-bold text-white">
               hungry<span className="text-yellow-400 animate-bounce inline-block">rats</span>
-            </h1>
+            </h1></Link>
           </div>
           
           <div className="hidden lg:flex items-center gap-6">
-          <Link href={"/subscription"} className="text-white/90 hover:text-white hover:cursor-pointer  transition-colors text-sm hover:scale-105 transform">Subscription</Link>
-          <Link href={"/works"} className="text-white/90 hover:text-white  hover:cursor-pointer transition-colors text-sm hover:scale-105 transform">How it Works</Link>
-          <Link href={"/contact"} className="text-white/90 hover:text-white  hover:cursor-pointer transition-colors text-sm hover:scale-105 transform">Contact Us</Link>
+            <Link href={"/subscription"} className="text-white/90 hover:text-white hover:cursor-pointer  transition-colors text-sm hover:scale-105 transform">Subscription</Link>
+            <Link href={"/works"} className="text-white/90 hover:text-white  hover:cursor-pointer transition-colors text-sm hover:scale-105 transform">How it Works</Link>
+            <Link href={"/contact"} className="text-white/90 hover:text-white  hover:cursor-pointer transition-colors text-sm hover:scale-105 transform">Contact Us</Link>
           </div>
         </div>
 
@@ -109,10 +215,63 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
               2
             </span>
           </button>
-          <button className="text-sm bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-all hover:scale-105 transform" onClick={Showsignup}>
-            Sign up
+          
+         
+          <div className="relative lg:block hidden">
+          <button 
+            onClick={toggleDropdown}
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <User className="h-5 w-5 text-white" />
           </button>
-        <AlignJustify className='text-white lg:hidden hover:cursor-pointer' onClick={handleSidebar} />
+          
+          {isDropdownOpen && (
+        <>
+          {/* Full height overlay with scroll lock */}
+          <div 
+            className="fixed inset-0 h-screen w-screen bg-black/20 backdrop-blur-sm z-40 overflow-hidden"
+            onClick={toggleDropdown}
+          />
+          
+          {/* Dropdown menu */}
+          <div 
+            className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg py-2 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-4 py-3 border-b border-gray-100">
+              <h3 className="text-sm font-medium text-gray-800">Account</h3>
+              <p className="text-xs text-gray-500 mt-1">Manage your account settings</p>
+            </div>
+            
+            {/* Menu items */}
+            <div className="py-2">
+              <button
+                onClick={() => {
+                  toggleDropdown();
+                  Showsignup();
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition-colors ${userverify?.[0]? 'hidden ' : "block"}`}
+              >
+                <UserPlus className="h-4 w-4 text-blue-500" />
+                <span>Sign up</span>
+              </button>
+              
+              <button
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition-colors ${userverify?.[0]? 'block ' : "hidden"}`} onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 text-red-500 font-semibold" />
+                <span className='text-red-500'>Log out</span>
+              </button>
+              
+            </div>
+            
+           
+          </div>
+        </>
+      )}
+        </div>
+          <AlignJustify className='text-white lg:hidden hover:cursor-pointer' onClick={handleSidebar} />
         </div>
       </nav>
 
@@ -250,6 +409,7 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
     <MobileSidebar 
       sidebar={sidebar} 
       handleSidebar={handleSidebar}
+      showsignup={Showsignup}
     />
    </>
   )

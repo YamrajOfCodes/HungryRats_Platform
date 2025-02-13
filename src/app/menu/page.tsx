@@ -4,13 +4,37 @@ import Header from '@/Components/Header/Header'
 import Loginpopup from '@/Components/LoginPopup/Loginpopup';
 import { CheckCircle, ShoppingCart, Star, X, Zap } from 'lucide-react';
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import food from "@/Assets/food.jpg"
+import { useAppDispatch } from '@/hooks';
+import { RootState } from '@/Redux/App/store';
+import { getProductsdata } from '@/Redux/Slices/User/userSlice';
+import { useSelector } from 'react-redux';
+
 
 const Page = () => {
 
    const [cartsidebar,setcartSidebar] = useState(false);
   const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
+  const { getproducts } = useSelector((state:RootState)=>state.User);
+  const dispatch = useAppDispatch();
+
+
+  // console.log(getproducts);
+
+   const menu = getproducts?.[0]?.filter((foodItem:any,index:number)=>{
+        if(index > 2){
+          return foodItem
+        }
+   })
+
+   console.log(menu);
+   
+  
+
+  useEffect(()=>{
+    dispatch(getProductsdata())
+  },[])
 
     const menuItems = [
         {
@@ -70,10 +94,10 @@ const Page = () => {
       }
     
   return (
-<>
-<div className=' min-h-screen'>
+    <>
     <Header Showpopup={handleLoginpopup} Showsignup={handleSignuppopup} msg={true} cartsidebar={handlecartSidebar}/>
-    <div className="menu  h-[80vh] flex justify-center items-center">
+    <div className='min-h-screen w-full'>
+    <div className="menu  h-auto mb-2 lg:h-[80vh] flex justify-center items-center">
     <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-10">
           {/* <div>
@@ -82,15 +106,15 @@ const Page = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 h-full">
-          {menuItems.map((item) => (
+          {menu?.map((item:any) => (
             <div 
-              key={item.id}
+              key={item._id}
               className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-blue-100"
             >
               <div className="relative">
                 <img 
-                  src={item.image} 
-                  alt={item.name}
+                  src={item.productimage} 
+                  alt={item.productname}
                   className="w-full  h-48 md:h-56 object-cover"
                 />
                 <div className="absolute top-4 right-4 bg-white/80 rounded-full p-2 flex items-center">
@@ -99,12 +123,12 @@ const Page = () => {
                 </div>
               </div>
               <div className="p-6">
-                <h2 className=" text-lg md:text-2xl font-bold text-blue-900 mb-3">{item.name}</h2>
+                <h2 className=" text-lg md:text-2xl font-bold text-blue-900 mb-3">{item.productname}</h2>
                 <p className="text-sm md:text-lg text-blue-700 mb-4">{item.description}</p>
                 <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                    <span className=" text-lg md:text-xl animate-pulse font-extrabold text-blue-600 mr-3">${item.price.toFixed(2)}</span>
-                    <span className="text-sm md:text-lg text-gray-400 line-through">${item.originalPrice.toFixed(2)}</span>
+                    <span className=" text-lg md:text-xl animate-pulse font-extrabold text-blue-600 mr-3">${item.price}</span>
+                    <span className="text-sm md:text-lg text-gray-400 line-through">${item.subprice}</span>
                   </div>
                   <button className="bg-blue-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl hover:bg-blue-700 transition-colors font-semibold">
                     Add to Cart
@@ -128,7 +152,7 @@ const Page = () => {
   {/* CartSidebar */}
 
   <div 
-      className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] hidden sm:block 
+      className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] 
         ${cartsidebar ? "translate-x-0" : "translate-x-full"} 
         transition-transform duration-500 ease-in-out z-50 
         border-l-4 border-blue-500 shadow-2xl`}

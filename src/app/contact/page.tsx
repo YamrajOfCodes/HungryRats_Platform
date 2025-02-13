@@ -8,19 +8,23 @@ import Loginpopup from '@/Components/LoginPopup/Loginpopup';
 import food from "@/Assets/food.jpg"
 import { useRouter } from 'next/navigation';
 
- const page = () => {
+interface Data{
+  dataa:string
+}
+
+ const page : React.FC<Data> = ({dataa}) => {
   
       const router = useRouter();
  
       const [showloginpopup,setloginpopup] = useState(false);
       const [showsignuppopup,setsignuppopup] = useState(false);
-      const [popup,setpopup] = useState("")
+      const [popup,setpopup] = useState<string>("")
       const [cartsidebar,setcartSidebar] = useState(false);
       const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
 
-      const {message} = router
-
-      console.log(message);
+    
+       console.log(dataa);
+       
       
     
     
@@ -34,16 +38,18 @@ import { useRouter } from 'next/navigation';
           document.body.classList.add('overflow-hidden');
       }
     
-      const handleSignuppopup = (e:any)=>{
+      const handleSignuppopup = ()=>{
         setpopup("signup")
         setsignuppopup(true);
           document.body.classList.add('overflow-hidden');
       }
-      const hideLoginpopup = (e:any)=>{
+      const hideLoginpopup = ()=>{
         setloginpopup(false);
         setsignuppopup(false)
           document.body.classList.remove('overflow-hidden');
       }
+
+      
 
     
 
@@ -85,8 +91,8 @@ import { useRouter } from 'next/navigation';
       
 
       
-      const [focusedInput, setFocusedInput] = useState(null);
-     const [hoveredCard, setHoveredCard] = useState(null);
+      const [focusedInput, setFocusedInput] = useState<null | string>(null);
+     const [hoveredCard, setHoveredCard] = useState<any>(null);
 
   return (
    <>
@@ -146,7 +152,7 @@ import { useRouter } from 'next/navigation';
                       'text-sm text-blue-600 -translate-y-7 translate-x-2' : 
                       'text-gray-500 top-4 peer-focus:text-sm peer-focus:text-blue-600 peer-focus:-translate-y-7 peer-focus:translate-x-2'
                     }`}>
-                    Message
+                    {"Message"}
                   </label>
                 </div>
               </div>
@@ -237,8 +243,8 @@ import { useRouter } from 'next/navigation';
 
   
               <div className={`absolute flex justify-center top-0 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
-    <Loginpopup popup={popup} />
-    </div>
+              <Loginpopup popup={popup} hideloginpopup={hideLoginpopup}  />
+              </div>
 
 
     {/* CartSidebar */}

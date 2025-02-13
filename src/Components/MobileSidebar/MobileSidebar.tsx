@@ -1,15 +1,22 @@
 "use client"
-import React from 'react';
-import { X, Home, CreditCard, HelpCircle, MessageCircle, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, Home, CreditCard, HelpCircle, MessageCircle, ChevronRight, LogIn } from 'lucide-react';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/Redux/App/store';
+import { Logout, userVerify } from '@/Redux/Slices/User/userSlice';
+import { useAppDispatch } from '@/hooks';
 
-
-interface Sidebar{
-    sidebar:boolean,
-    handleSidebar:()=> void;
+interface Sidebar {
+    sidebar: boolean;
+    handleSidebar: () => void;
+    showsignup:any
 }
 
-const MobileSidebar : React.FC<Sidebar>  = ({ sidebar, handleSidebar }) => {
+const MobileSidebar: React.FC<Sidebar> = ({ sidebar,handleSidebar,showsignup }) => {
+
+  const dispatch = useAppDispatch();
+
   const menuItems = [
     { icon: Home, label: 'Home', badge: null },
     { icon: CreditCard, label: 'Subscription', badge: 'New' },
@@ -17,10 +24,44 @@ const MobileSidebar : React.FC<Sidebar>  = ({ sidebar, handleSidebar }) => {
     { icon: MessageCircle, label: 'Contact us', badge: '3' },
   ];
 
+    const [token,setToken] = useState(false)
+
+    const { login } = useSelector((state:RootState)=>state.User);
+    const { logout } = useSelector((state:RootState)=>state.User);
+    const { userverify } = useSelector((state:RootState)=>state.User);
+          console.log(login);
+
+      console.log(userverify);
+
+
+       const handleLogout = ()=>{
+           handleSidebar()
+           dispatch(Logout())
+        }
+
+      const userLoggedIn = ()=>{
+         dispatch(userVerify())
+      }
+
+
+      const handleSubmit = (data:any)=>{
+        if(data=="logout"){
+          handleLogout()
+        }else{
+          showsignup();
+        }
+      }
+
+
+    useEffect(()=>{
+     userLoggedIn() 
+    },[login,logout])
+
+
   return (
     <div
       className={`
-        fixed inset-y-0 right-0 w-80 bg-white shadow-2xl z
+        fixed inset-y-0 right-0 w-80 bg-white shadow-2xl rounded-md
         transform ${sidebar ? "translate-x-0" : "translate-x-full"}
         transition-transform duration-300 ease-in-out
         lg:hidden z-50
@@ -110,6 +151,22 @@ const MobileSidebar : React.FC<Sidebar>  = ({ sidebar, handleSidebar }) => {
 
       {/* Bottom Section */}
       <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-100">
+        {/* Login Button */}
+        <Link
+          href="#"
+          onClick={()=>{
+            handleSidebar()
+            // showsignup()
+          }}
+          className="flex items-center justify-center w-full mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <LogIn className="w-5 h-5 mr-2" />
+          {/* <span className={`font-medium`}>{userverify?.[0]?.length > 0 ? "Logout" : "Login"}</span>
+          <span className={`font-medium`}>{userverify?.[0]?.length > 0 ? "Logout" : "Login"}</span> */}
+          <span className={`font-medium  ${userverify?.[0]? 'block ' : "hidden"}`} onClick={()=>{handleSubmit("logout")}}>Logout</span>
+          <span className={`font-medium  ${userverify?.[0]? 'hidden ' : "block"}`} onClick={()=>{handleSubmit("login")}}>Login</span>
+        </Link>
+
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl">
           <h4 className="font-semibold text-gray-800 mb-2">Need Help?</h4>
           <p className="text-sm text-gray-600 mb-3">Contact our support team anytime</p>

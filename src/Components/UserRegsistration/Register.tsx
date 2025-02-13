@@ -1,15 +1,18 @@
 "use client"
+import { useAppDispatch } from '@/hooks';
 import React from 'react'
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { Login, Register as Registration } from '@/Redux/Slices/User/userSlice'
+import toast from 'react-hot-toast';
 
 interface UserFormData {
-    firstName: string;
-    lastName: string;
+    Firstname: string;
+    Lastname: string;
     email: string;
-    phone: string;
+    mobile: string;
     address: string;
     password: string;
-    confirmPassword: string;
+    confirmpassword: string;
   }
   
   interface FormErrors {
@@ -19,28 +22,29 @@ interface UserFormData {
 const Register = () => {
 
         const [formData, setFormData] = useState<UserFormData>({
-          firstName: '',
-          lastName: '',
+          Firstname: '',
+          Lastname: '',
           email: '',
-          phone: '',
+          mobile: '',
           address: '',
           password: '',
-          confirmPassword: ''
+          confirmpassword: ''
         });
       
         const [errors, setErrors] = useState<FormErrors>({});
         const [showPassword, setShowPassword] = useState(false);
+        const dispatch = useAppDispatch();
       
         const validateForm = (): boolean => {
           const newErrors: FormErrors = {};
       
           // First Name validation
-          if (!formData.firstName.trim()) {
+          if (!formData.Firstname.trim()) {
             newErrors.firstName = 'First name is required';
           }
       
           // Last Name validation
-          if (!formData.lastName.trim()) {
+          if (!formData.Lastname.trim()) {
             newErrors.lastName = 'Last name is required';
           }
       
@@ -52,7 +56,7 @@ const Register = () => {
       
           // Phone validation
           const phoneRegex = /^\+?[\d\s-]{10,}$/;
-          if (!formData.phone.trim() || !phoneRegex.test(formData.phone)) {
+          if (!formData.mobile.trim() || !phoneRegex.test(formData.mobile)) {
             newErrors.phone = 'Valid phone number is required';
           }
       
@@ -67,7 +71,7 @@ const Register = () => {
           }
       
           // Confirm Password validation
-          if (formData.password !== formData.confirmPassword) {
+          if (formData.password !== formData.confirmpassword) {
             newErrors.confirmPassword = 'Passwords do not match';
           }
       
@@ -89,6 +93,16 @@ const Register = () => {
             try {
               // Handle form submission logic here
               console.log('Form submitted:', formData);
+
+
+              dispatch(Registration(formData)).then((res:any)=>{
+                if(res.payload){
+                  setFormData({...formData,Firstname:"",Lastname:"",email:"",mobile:"",password:"",confirmpassword:"",address:""});
+                  toast.success("Registration is successfull")
+                }
+               })
+
+
             } catch (error) {
               console.error('Error submitting form:', error);
             }
@@ -112,8 +126,8 @@ const Register = () => {
                 </label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="Firstname"
+                  value={formData.Firstname}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.firstName ? 'border-red-500' : 'border-gray-300'
@@ -132,11 +146,11 @@ const Register = () => {
                 </label>
                 <input
                   type="text"
-                  name="lastName"
-                  value={formData.lastName}
+                  name="Lastname"
+                  value={formData.Lastname}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
-                    errors.lastName ? 'border-red-500' : 'border-gray-300'
+                    errors.Lastname ? 'border-red-500' : 'border-gray-300'
                   } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors`}
                   placeholder="Enter last name"
                 />
@@ -145,6 +159,10 @@ const Register = () => {
                 )}
               </div>
             </div>
+
+            {/* <div>
+              <input type="file" />
+            </div> */}
 
             {/* Email */}
             <div className="space-y-2">
@@ -173,8 +191,8 @@ const Register = () => {
               </label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
+                name="mobile"
+                value={formData.mobile}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 rounded-lg border ${
                   errors.phone ? 'border-red-500' : 'border-gray-300'
@@ -244,8 +262,8 @@ const Register = () => {
                 </label>
                 <input
                   type={showPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
+                  name="confirmpassword"
+                  value={formData.confirmpassword}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 rounded-lg border ${
                     errors.confirmPassword ? 'border-red-500' : 'border-gray-300'

@@ -5,9 +5,39 @@ import Hero from '@/Components/hero/Hero';
 import Loginpopup from '@/Components/LoginPopup/Loginpopup';
 import { trackFallbackParamAccessed } from 'next/dist/server/app-render/dynamic-rendering';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import food from "@/Assets/food.jpg"
-import { CheckCircle, ShoppingCart, X, Zap } from 'lucide-react';
+import { CheckCircle, Cross, CrossIcon, ShoppingCart, X, Zap } from 'lucide-react';
+import { RootState } from '@/Redux/App/store';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '@/hooks';
+import { getCart, getProductsdata, userVerify } from '@/Redux/Slices/User/userSlice';
+
+
+interface User{
+  _id:string
+}
+
+type Users = User[][]
+
+
+interface Cart{
+  productname:string,
+  productimage:string,
+  price:string
+}
+
+
+interface Product {
+  _id: string;
+  productname: string;
+  productimage: string;
+  price: number;
+  description?: string; // Optional field
+  category?: string; // Optional field
+}
+
+type GetProductResponse = Product[][];
 
 
 const page = () => {
@@ -17,6 +47,61 @@ const page = () => {
   const [popup,setpopup] = useState("signup")
   const [cartsidebar,setcartSidebar] = useState(false);
   const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
+  const dispatch = useAppDispatch();
+    const { userverify  } = useSelector((state:RootState) => state.User) as  { userverify : Users };
+    // console.log("userverify",userverify);
+
+
+  
+  const { getproducts } = useSelector((state:RootState)=>state.User) as {  getproducts : GetProductResponse };
+  // console.log(getproducts);
+  const { getcart } = useSelector((state:RootState)=>state.User) as { getcart : Cart[] };
+  console.log(getcart);
+
+
+  const getData = ()=>{
+      let datas = userverify?.[0]?.[0]?._id
+      console.log(datas);
+
+      if(userverify?.[0] == undefined){
+         setIsSubscriptionActive(false)
+      }else{
+        setIsSubscriptionActive(true)
+      }
+      
+      dispatch(getCart(datas))  
+      
+    
+    }
+     
+  
+
+    useEffect(()=>{
+      dispatch(getProductsdata())
+      dispatch(userVerify())
+    },[])
+  
+    useEffect(()=>{
+     getData();
+    },[userverify])
+  
+  
+
+
+  // console.log(getproducts);
+
+   const menu = getproducts?.[0]?.filter((foodItem:any,index:number)=>{
+        if(index > 2){
+          return foodItem
+        }
+   })
+
+   console.log(menu);
+   
+  
+
+ 
+
 
 
   const handlecartSidebar = ()=>{
@@ -75,51 +160,56 @@ const page = () => {
             <X size={28} className="text-white/80 hover:text-white" />
           </button>
         </div>
-        {isSubscriptionActive && (
+        {isSubscriptionActive? (
           <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
             <Zap size={20} className="text-yellow-300" />
             <span className="text-sm font-medium flex-grow">
               Premium Subscription Active
             </span>
             <CheckCircle size={20} className="text-green-300" />
-          </div>
-        )}
+          </div> 
+        )
+  :       
+  <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
+  <Zap size={20} className="text-red-500" />
+  <span className="text-sm font-medium flex-grow">
+    Premium Subscription is Not activated
+  </span>
+  <X size={20} className="text-red-400" />
+</div>  
+      } 
       </div>
 
       {/* Content Section */}
       <div className="p-6">
-        <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
-          <div className="flex items-center space-x-4">
-            <Image
-              src={food.src}
-              height={100}
-              width={100}
-              alt="cart image"
-              className="rounded-lg shadow-lg object-cover transform hover:scale-105 transition"
-            />
-            <div>
-              <p className="text-lg font-bold text-gray-800">Paneer Tikka</p>
-              <div className="flex items-center space-x-2">
-                <p className={`text-sm ${isSubscriptionActive ? 'text-gray-400 line-through' : 'text-gray-500'}`}>
-                  ₹75
-                </p>
-                {isSubscriptionActive && (
-                  <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs">
-                    Free
-                  </span>
-                )}
-              </div>
+       {
+        isSubscriptionActive &&  <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
+        <div className="flex items-center space-x-4 h-full">
+          <img src={getcart?.[0]?.productimage} className='h-40' ></img>
+          <div>
+            <p className="text-lg font-bold text-gray-800">{getcart?.[0]?.productname}</p>
+            <div className="flex items-center space-x-2">
+              <p className={`text-sm ${isSubscriptionActive ? 'text-gray-400 line-through' : 'text-gray-500'}`}>
+                ₹{getcart?.[0]?.price}
+              </p>
+              {isSubscriptionActive && (
+                <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs">
+                  Free
+                </span>
+              )}
             </div>
           </div>
-          <button
-            onClick={() => {
-              // logic to remove item
-            }}
-            className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
-          >
-            <X size={20} />
-          </button>
         </div>
+        <button
+          onClick={() => {
+            // logic to remove item
+          }}
+          className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+        >
+          <X size={20} />
+        </button>
+      </div>
+       }
       </div>
 
       {/* Info Section */}

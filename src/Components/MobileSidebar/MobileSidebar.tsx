@@ -29,9 +29,9 @@ const MobileSidebar: React.FC<Sidebar> = ({ sidebar,handleSidebar,showsignup }) 
     const { login } = useSelector((state:RootState)=>state.User);
     const { logout } = useSelector((state:RootState)=>state.User);
     const { userverify } = useSelector((state:RootState)=>state.User);
-          console.log(login);
+          // console.log(login);
 
-      console.log(userverify);
+      // console.log(userverify);
 
 
        const handleLogout = ()=>{

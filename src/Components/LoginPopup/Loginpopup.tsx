@@ -25,9 +25,9 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
       const [password, setPassword] = useState('');
       const [active,setactive] = useState("");
       const dispatch = useAppDispatch();
-      const { login } = useSelector((state:RootState)=>state.User);
+      // const { login } = useSelector((state:RootState)=>state.User);
 
-      console.log(login);
+      // console.log(login);
       
 
 

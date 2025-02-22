@@ -6,7 +6,8 @@ import MobileSidebar from '../MobileSidebar/MobileSidebar';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/Redux/App/store';
 import { useAppDispatch } from '@/hooks';
-import { Logout, userVerify } from '@/Redux/Slices/User/userSlice';
+import { getCart, getProductsdata, Logout, userVerify } from '@/Redux/Slices/User/userSlice';
+import Image from 'next/image';
 
 interface Functions{
   Showpopup:(e:any)=>void,
@@ -14,6 +15,24 @@ interface Functions{
   msg:boolean,
   cartsidebar:()=>void
 }
+
+interface Users{
+  _id:string
+}
+
+type User = Users[][];
+
+
+interface Product {
+  _id: string;
+  productname: string;
+  productimage: string;
+  price: number;
+  description?: string; // Optional field
+  category?: string; // Optional field
+}
+
+type GetProductResponse = Product[][];
 
 
 const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => {
@@ -29,10 +48,53 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useAppDispatch();
   const { logout } = useSelector((state:RootState) => state.User);
+  const { userverify } = useSelector((state:RootState) => state.User) as  { userverify : User};
   // console.log(logout);
-  const { userverify  } = useSelector((state:RootState) => state.User);
-  // console.log(userverify);
+ 
+  console.log(userverify?.[0]?.[0]?._id);
 
+   const { getproducts } = useSelector((state:RootState)=>state.User) as {  getproducts : GetProductResponse };
+  // console.log(getproducts);
+
+ const {getcart} = useSelector((state:RootState)=>state.User);
+ const {addtocart} = useSelector((state:RootState)=>state.User);
+  console.log(getcart);
+
+   
+
+
+   let data = getproducts?.[0]?.filter((element,index)=>{
+        if(index < 2){
+          return element
+        }
+   })
+
+  //  console.log(data);
+
+  const getData = ()=>{
+    let datas = userverify?.[0]?.[0]?._id
+    console.log(datas);
+    
+    dispatch(getCart(datas))  
+    
+  
+  }
+   
+  
+    useEffect(()=>{
+      dispatch(userVerify())
+      dispatch(getProductsdata())
+    },[])
+    
+    useEffect(()=>{
+      getData();
+    },[userverify])
+
+    useEffect(()=>{
+    getData();
+    },[addtocart])
+
+  
 
 
   
@@ -107,7 +169,7 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
           <button className="p-2 relative group">
             <ShoppingCart className="h-5 w-5 text-white group-hover:scale-110 transition-transform" onClick={cartsidebar} />
             <span className="absolute -top-1 -right-1 bg-yellow-400 text-blue-900 text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center animate-bounce">
-              2
+              {getcart?.[0] == undefined? "0" : "1"}
             </span>
           </button>
           
@@ -212,7 +274,7 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
           <button className="p-2 relative group">
             <ShoppingCart className="h-5 w-5 text-white group-hover:scale-110 transition-transform" onClick={cartsidebar} />
             <span className="absolute -top-1 -right-1 bg-yellow-400 text-blue-900 text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center animate-bounce">
-              2
+            {getcart?.[0] == undefined? "0" : "1"}
             </span>
           </button>
           
@@ -340,20 +402,24 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
             {/* Floating Order Cards */}
             <div className="absolute top-1/4 -left-12 bg-white p-4 rounded-xl shadow-xl animate-float delay-100">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg"></div>
+                <div className="w-12 h-12 bg-orange-100 rounded-lg">
+                  <img src={data?.[0]?.productimage} alt="product" className='h-full'/>
+                </div>
                 <div>
-                  <div className="font-medium text-gray-900">Pizza Margherita</div>
-                  <div className="text-sm text-gray-500">$12.99</div>
+                  <div className="font-medium text-gray-900">{data?.[0]?.productname}</div>
+                  <div className="text-sm text-gray-500">Rs {data?.[0]?.price}</div>
                 </div>
               </div>
             </div>
 
             <div className="absolute bottom-1/4 -right-8 bg-white p-4 rounded-xl shadow-xl animate-float delay-200">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-green-100 rounded-lg"></div>
+                <div className="w-12 h-12 bg-green-100 rounded-lg">
+                <img src={data?.[1]?.productimage} alt="product" className='h-full'/>
+                </div>
                 <div>
-                  <div className="font-medium text-gray-900">Fresh Salad</div>
-                  <div className="text-sm text-gray-500">$8.99</div>
+                <div className="font-medium text-gray-900">{data?.[1]?.productname}</div>
+                <div className="text-sm text-gray-500">Rs {data?.[1]?.price}</div>
                 </div>
               </div>
             </div>

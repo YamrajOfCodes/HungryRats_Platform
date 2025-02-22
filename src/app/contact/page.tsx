@@ -1,12 +1,32 @@
 "use client"
 import Footer from '@/Components/Footer/Footer';
 import Header from '@/Components/Header/Header'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Phone, Mail, MapPin, Clock, Send, ChevronRight, ArrowUpRight, X, CheckCircle, Zap, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Loginpopup from '@/Components/LoginPopup/Loginpopup';
 import food from "@/Assets/food.jpg"
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/Redux/App/store';
+import { useAppDispatch } from '@/hooks';
+import { getCart, userVerify } from '@/Redux/Slices/User/userSlice';
+
+
+
+interface CartItem {
+  productimage: string;
+  productname: string;
+  price: number;
+}
+
+interface User {
+  _id: string;
+  name?: string; // Add other user properties as needed
+  email?: string;
+}
+
+type UserVerifyResponse = User[][]; // Array containing arrays of User objects
 
 interface Data{
   dataa:string
@@ -21,9 +41,42 @@ interface Data{
       const [popup,setpopup] = useState<string>("")
       const [cartsidebar,setcartSidebar] = useState(false);
       const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
+      const { userverify } = useSelector((state: RootState) => state.User) as { userverify: UserVerifyResponse };
+      const dispatch = useAppDispatch();
+
+
+
+      const { getcart } = useSelector((state: RootState) => state.User) as { getcart: CartItem[] };
+      
+                 const getData = ()=>{
+                       let datas = userverify?.[0]?.[0]?._id
+                       console.log(datas);
+                 
+                       if(userverify?.[0] == undefined){
+                          setIsSubscriptionActive(false)
+                       }else{
+                         setIsSubscriptionActive(true)
+                       }
+                       
+                       dispatch(getCart(datas))  
+                       
+                     
+                     }
+                      
+                     
+            
+                    useEffect(()=>{
+                      dispatch(userVerify())
+                    },[])
+                  
+                    useEffect(()=>{
+                     getData();
+                    },[userverify])
+                
+
 
     
-       console.log(dataa);
+      //  console.log(dataa);
        
       
     
@@ -248,7 +301,7 @@ interface Data{
 
 
     {/* CartSidebar */}
-    <div 
+  <div 
       className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] 
         ${cartsidebar ? "translate-x-0" : "translate-x-full"} 
         transition-transform duration-500 ease-in-out z-50 
@@ -268,51 +321,56 @@ interface Data{
             <X size={28} className="text-white/80 hover:text-white" />
           </button>
         </div>
-        {isSubscriptionActive && (
+        {isSubscriptionActive? (
           <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
             <Zap size={20} className="text-yellow-300" />
             <span className="text-sm font-medium flex-grow">
               Premium Subscription Active
             </span>
             <CheckCircle size={20} className="text-green-300" />
-          </div>
-        )}
+          </div> 
+        )
+  :       
+  <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
+  <Zap size={20} className="text-red-500" />
+  <span className="text-sm font-medium flex-grow">
+    Premium Subscription is Not activated
+  </span>
+  <X size={20} className="text-red-400" />
+</div>  
+      } 
       </div>
 
       {/* Content Section */}
       <div className="p-6">
-        <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
-          <div className="flex items-center space-x-4">
-            <Image
-              src={food.src}
-              height={100}
-              width={100}
-              alt="cart image"
-              className="rounded-lg shadow-lg object-cover transform hover:scale-105 transition"
-            />
-            <div>
-              <p className="text-lg font-bold text-gray-800">Paneer Tikka</p>
-              <div className="flex items-center space-x-2">
-                <p className={`text-sm ${isSubscriptionActive ? 'text-gray-400 line-through' : 'text-gray-500'}`}>
-                  ₹75
-                </p>
-                {isSubscriptionActive && (
-                  <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs">
-                    Free
-                  </span>
-                )}
-              </div>
+       {
+        isSubscriptionActive &&  <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
+        <div className="flex items-center space-x-4 h-full">
+          <img src={getcart?.[0]?.productimage} className='h-40' ></img>
+          <div>
+            <p className="text-lg font-bold text-gray-800">{getcart?.[0]?.productname}</p>
+            <div className="flex items-center space-x-2">
+              <p className={`text-sm ${isSubscriptionActive ? 'text-gray-400 line-through' : 'text-gray-500'}`}>
+                ₹{getcart?.[0]?.price}
+              </p>
+              {isSubscriptionActive && (
+                <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs">
+                  Free
+                </span>
+              )}
             </div>
           </div>
-          <button
-            onClick={() => {
-              // logic to remove item
-            }}
-            className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
-          >
-            <X size={20} />
-          </button>
         </div>
+        <button
+          onClick={() => {
+            // logic to remove item
+          }}
+          className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+        >
+          <X size={20} />
+        </button>
+      </div>
+       }
       </div>
 
       {/* Info Section */}

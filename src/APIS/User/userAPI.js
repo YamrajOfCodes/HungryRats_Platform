@@ -27,3 +27,33 @@ export const addproductAPI = async(data,header)=>{
 export const getallproductsAPI = async(data,header)=>{
     return await commonrequest("GET",`${BASE_URL}/product/api/getallproducts`,"",header,"");
 }
+
+
+// cartAPI
+
+
+export const addtocartAPI = async(data,header)=>{
+    return await commonrequest("POST",`${BASE_URL}/user/api/addcart`,data,header,"");
+}
+
+export const getcartAPI = async(data,header)=>{
+    console.log(data);
+    
+    return await commonrequest("GET",`${BASE_URL}/user/api/getcart/${data}`,data,header,"user");
+}
+
+export const deletecartAPI = async(data,header)=>{
+    return await commonrequest("DELETE",`${BASE_URL}/user/api/deletecart`,data,header,"");
+}
+
+
+
+// payment and order API
+
+export const checksubscriptionAPI =  async(data,header)=>{
+    return await commonrequest("GET",`${BASE_URL}/user/api/subscription`,data,header,"");
+}
+
+export const getsubscriptionAPI =  async(data,header)=>{
+    return await commonrequest("POST",`${BASE_URL}/user/api/subscribe`,data,header,"");
+}

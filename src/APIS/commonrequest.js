@@ -2,8 +2,8 @@ import axios from "axios";
 
 export const commonrequest = async(methods,url,body,header,auth)=>{
     const userToken = localStorage.getItem("login");
-    console.log(userToken);
-    console.log(auth);
+    // console.log(userToken);
+    // console.log(auth);
     
     
    
@@ -21,7 +21,7 @@ export const commonrequest = async(methods,url,body,header,auth)=>{
         config.headers.Authorization = "dsdsd"
     }else if(auth == "user"){
         config.headers.Authorization = userToken;
-        console.log(userToken);
+        // console.log(userToken);
         
     }
 
@@ -34,7 +34,7 @@ export const commonrequest = async(methods,url,body,header,auth)=>{
 
     try {
         const response = await axios(config)
-        console.log(response);
+        // console.log(response);
         
         return response;
     } catch (error) {

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { 
   Zap, 
   ShieldCheck, 
@@ -15,7 +15,8 @@ import {
   LeafyGreen,
   CheckCircle,
   Truck,
-  Gift
+  Gift,
+  User
 } from 'lucide-react';
 import Header from '@/Components/Header/Header';
 import Footer from '@/Components/Footer/Footer';
@@ -23,6 +24,27 @@ import Loginpopup from '@/Components/LoginPopup/Loginpopup';
 import food from "@/Assets/food.jpg"
 import {  ShoppingCart, X } from 'lucide-react';
 import Image from 'next/image';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/Redux/App/store';
+import { CheckSubscription, getCart, getProductsdata, userVerify } from '@/Redux/Slices/User/userSlice';
+import { useAppDispatch } from '@/hooks';
+import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
+
+
+interface User{
+  _id: string;
+  name?: string; // Add other user properties as needed
+  email?: string;
+}
+
+type Users = User[][];
+
+ interface Carts{
+  productimage: string;
+  productname: string;
+  price: number;
+ }
 
 const page = () => {
   const [selectedPlan, setSelectedPlan] = useState('1 Month');
@@ -31,6 +53,17 @@ const page = () => {
     const [expandedSection, setExpandedSection] = useState(null);
       const [cartsidebar,setcartSidebar] = useState(false);
        const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
+       const {userverify} = useSelector((state:RootState)=>state.User) as { userverify : Users };
+       const {subscription} = useSelector((state:RootState)=>state.User);
+       console.log(subscription);
+       
+       const dispatch = useAppDispatch();
+
+       console.log("userverify",userverify);
+
+       const [response,setResponse] = useState<any>();
+       const [err,setError] = useState<any>()
+       
 
     const [plan,setplan] = useState({
       name: 'Starter Plan',
@@ -72,8 +105,61 @@ const page = () => {
    const handleClick = (plan:any) => {
     setSelectedPlan(plan);
   };
-  
-    const sections = {
+
+
+  const handleSubscription = (price:any)=>{
+     if(userverify?.[0] == undefined){
+      handleSignuppopup();
+     }else{
+
+      let userid = userverify?.[0]?.[0]?._id
+      dispatch(CheckSubscription(userid)).then((res)=>{
+        console.log(res);
+        
+        if(res.payload == "not subscribed"){
+          handlePayment(price);
+        }else{
+          toast.error("Subscription is already active!!");
+        }
+      })
+      
+     }
+  }
+
+  const handlePayment = async (price:any) => {
+   let orderId = Math. floor(Math. random() * (9999999999 - 100000000 + 1)) + 1000000000
+    const apiUrl = 'http://localhost:4000/user/api/payment';
+    const postData = {
+        customer_mobile: '8956903018',
+        user_token: '31b8e247b5b4bdc8cc6769cb32db3cd3',
+        amount: price || "1",
+        order_id: orderId,
+        redirect_url: 'http://localhost:3000/success-premium',
+        remark1: 'testremark',
+        remark2: 'testremark2'
+    };
+
+    try {
+        const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(postData)
+        });
+        const data = await res.json();
+        setResponse(data);
+        setError(null);
+        
+        if (data.result && data.result.payment_url) {
+            window.location.href = data.result.payment_url; // Redirect to payment page
+        }
+    } catch (err) {
+        setResponse(null);
+    }
+};
+
+   
+
+    const sections:any = {
       explore: {
         icon: <Utensils className="w-10 h-10 text-cyan-400" />,
         title: "Explore Cuisines",
@@ -129,19 +215,20 @@ const page = () => {
               document.body.classList.add('overflow-hidden');
           }
         
-          const handleSignuppopup = (e:any)=>{
+          const handleSignuppopup = ()=>{
             setpopup("signup")
             setsignuppopup(true);
               document.body.classList.add('overflow-hidden');
           }
         
         
-          const hideLoginpopup = (e:any)=>{
+          const hideLoginpopup = ()=>{
             setloginpopup(false);
             setsignuppopup(false)
               document.body.classList.remove('overflow-hidden');
           }
 
+       
           const planss = [
             { 
               name: 'Starter Plan', 
@@ -169,6 +256,38 @@ const page = () => {
           const handlecartSidebar = ()=>{
             setcartSidebar(true)
           }
+
+
+
+          const { getcart } = useSelector((state:RootState)=>state.User) as { getcart : Carts[] };
+          console.log(getcart);
+
+
+const getData = ()=>{
+      let datas = userverify?.[0]?.[0]?._id
+      console.log(datas);
+
+      if(userverify?.[0] == undefined){
+         setIsSubscriptionActive(false)
+      }else{
+        setIsSubscriptionActive(true)
+      }
+      
+      dispatch(getCart(datas))  
+      
+    
+    }
+     
+     
+  
+
+    useEffect(()=>{
+      dispatch(userVerify())
+    },[])
+  
+    useEffect(()=>{
+     getData();
+    },[userverify])
 
  
   
@@ -252,7 +371,7 @@ const page = () => {
                 <li className='text-black'>Save {plan.savings}%</li>
                 <li className='text-black'>Free Delivery</li>
               </ul>
-              <button className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-3 rounded-full hover:opacity-90 transition">
+              <button className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-3 rounded-full hover:opacity-90 transition" onClick={()=>{handleSubscription(plan.price)}}>
                 Choose Plan
               </button>
             </div>
@@ -447,7 +566,7 @@ const page = () => {
                   <li>Free Delivery</li>
                   <li>Nutrition Consultation</li>
                 </ul>
-                <button className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition">
+                <button className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition"onClick={()=>{handleSubscription(plan.price)}}>
                   Select Plan
                 </button>
               </div>
@@ -484,100 +603,105 @@ const page = () => {
 
   
     <div className={`absolute flex justify-center top-0 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
-    <Loginpopup popup={popup} />
+    <Loginpopup hideloginpopup={hideLoginpopup} popup={popup} />
     </div>
 
 
     {/* CartSidebar */}
-    <div 
-      className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] 
-        ${cartsidebar ? "translate-x-0" : "translate-x-full"} 
-        transition-transform duration-500 ease-in-out z-50 
-        border-l-4 border-blue-500 shadow-2xl`}
-    >
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <ShoppingCart size={28} />
-            <h2 className="text-2xl font-bold">My Cart</h2>
-          </div>
-          <button
-            onClick={() => setcartSidebar(false)}
-            className="hover:rotate-90 transition-transform"
-          >
-            <X size={28} className="text-white/80 hover:text-white" />
-          </button>
-        </div>
-        {isSubscriptionActive && (
-          <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
-            <Zap size={20} className="text-yellow-300" />
-            <span className="text-sm font-medium flex-grow">
-              Premium Subscription Active
-            </span>
-            <CheckCircle size={20} className="text-green-300" />
-          </div>
-        )}
-      </div>
-
-      {/* Content Section */}
-      <div className="p-6">
-        <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
-          <div className="flex items-center space-x-4">
-            <Image
-              src={food.src}
-              height={100}
-              width={100}
-              alt="cart image"
-              className="rounded-lg shadow-lg object-cover transform hover:scale-105 transition"
-            />
-            <div>
-              <p className="text-lg font-bold text-gray-800">Paneer Tikka</p>
-              <div className="flex items-center space-x-2">
-                <p className={`text-sm ${isSubscriptionActive ? 'text-gray-400 line-through' : 'text-gray-500'}`}>
-                  ₹75
-                </p>
-                {isSubscriptionActive && (
-                  <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs">
-                    Free
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              // logic to remove item
-            }}
-            className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-      </div>
-
-      {/* Info Section */}
-      <div className="px-6 text-center text-gray-600">
-        <p className="text-sm bg-blue-50 p-3 rounded-lg">
-          Subscription allows one meal delivery at a time
-        </p>
-      </div>
-
-      {/* Order Button */}
-      <div className="absolute bottom-0 left-0 right-0 p-6">
-        <button 
-          className={`w-full px-6 py-4 text-white text-lg font-bold rounded-xl 
-            transition-all duration-300 ease-in-out 
-            ${isSubscriptionActive 
-              ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
-              : 'bg-gray-400 cursor-not-allowed'
-            }`}
-          disabled={!isSubscriptionActive}
-        >
-          {isSubscriptionActive ? 'Order Now' : 'Activate Subscription'}
-        </button>
-      </div>
-    </div>
+     <div 
+         className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] 
+           ${cartsidebar ? "translate-x-0" : "translate-x-full"} 
+           transition-transform duration-500 ease-in-out z-50 
+           border-l-4 border-blue-500 shadow-2xl`}
+       >
+         {/* Header Section */}
+         <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+           <div className="flex justify-between items-center">
+             <div className="flex items-center space-x-3">
+               <ShoppingCart size={28} />
+               <h2 className="text-2xl font-bold">My Cart</h2>
+             </div>
+             <button
+               onClick={() => setcartSidebar(false)}
+               className="hover:rotate-90 transition-transform"
+             >
+               <X size={28} className="text-white/80 hover:text-white" />
+             </button>
+           </div>
+           {isSubscriptionActive? (
+             <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
+               <Zap size={20} className="text-yellow-300" />
+               <span className="text-sm font-medium flex-grow">
+                 Premium Subscription Active
+               </span>
+               <CheckCircle size={20} className="text-green-300" />
+             </div> 
+           )
+     :       
+     <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center space-x-2">
+     <Zap size={20} className="text-red-500" />
+     <span className="text-sm font-medium flex-grow">
+       Premium Subscription is Not activated
+     </span>
+     <X size={20} className="text-red-400" />
+   </div>  
+         } 
+         </div>
+   
+         {/* Content Section */}
+         <div className="p-6">
+          {
+           isSubscriptionActive &&  <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
+           <div className="flex items-center space-x-4 h-full">
+             <img src={getcart?.[0]?.productimage} className='h-40' ></img>
+             <div>
+               <p className="text-lg font-bold text-gray-800">{getcart?.[0]?.productname}</p>
+               <div className="flex items-center space-x-2">
+                 <p className={`text-sm ${isSubscriptionActive ? 'text-gray-400 line-through' : 'text-gray-500'}`}>
+                   ₹{getcart?.[0]?.price}
+                 </p>
+                 {isSubscriptionActive && (
+                   <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs">
+                     Free
+                   </span>
+                 )}
+               </div>
+             </div>
+           </div>
+           <button
+             onClick={() => {
+               // logic to remove item
+             }}
+             className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+           >
+             <X size={20} />
+           </button>
+         </div>
+          }
+         </div>
+   
+         {/* Info Section */}
+         <div className="px-6 text-center text-gray-600">
+           <p className="text-sm bg-blue-50 p-3 rounded-lg">
+             Subscription allows one meal delivery at a time
+           </p>
+         </div>
+   
+         {/* Order Button */}
+         <div className="absolute bottom-0 left-0 right-0 p-6">
+           <button 
+             className={`w-full px-6 py-4 text-white text-lg font-bold rounded-xl 
+               transition-all duration-300 ease-in-out 
+               ${isSubscriptionActive 
+                 ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
+                 : 'bg-gray-400 cursor-not-allowed'
+               }`}
+             disabled={!isSubscriptionActive}
+           >
+             {isSubscriptionActive ? 'Order Now' : 'Activate Subscription'}
+           </button>
+         </div>
+       </div>
      </>
   );
 };

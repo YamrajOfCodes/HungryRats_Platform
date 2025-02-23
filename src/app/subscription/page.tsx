@@ -47,6 +47,7 @@ type Users = User[][];
  }
 
 const page = () => {
+  const [premium,setPremium] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState('1 Month');
     const [activeSection, setActiveSection] = useState('explore');
     const plansss = ['1 Month', '2 Months', '3 Months'];
@@ -116,7 +117,7 @@ const page = () => {
       dispatch(CheckSubscription(userid)).then((res)=>{
         console.log(res);
         
-        if(res.payload == "not subscribed"){
+        if(res.payload == undefined || "not subscribed"){
           handlePayment(price);
         }else{
           toast.error("Subscription is already active!!");
@@ -126,13 +127,14 @@ const page = () => {
      }
   }
 
+
   const handlePayment = async (price:any) => {
    let orderId = Math. floor(Math. random() * (9999999999 - 100000000 + 1)) + 1000000000
     const apiUrl = 'http://localhost:4000/user/api/payment';
     const postData = {
         customer_mobile: '8956903018',
         user_token: '31b8e247b5b4bdc8cc6769cb32db3cd3',
-        amount: price || "1",
+        amount:  "1",
         order_id: orderId,
         redirect_url: 'http://localhost:3000/success-premium',
         remark1: 'testremark',
@@ -263,14 +265,24 @@ const page = () => {
           console.log(getcart);
 
 
-const getData = ()=>{
-      let datas = userverify?.[0]?.[0]?._id
-      console.log(datas);
+         const getData = ()=>{
+         let datas = userverify?.[0]?.[0]?._id
+         console.log(datas);
 
-      if(userverify?.[0] == undefined){
+         if(userverify?.[0] == undefined){
          setIsSubscriptionActive(false)
       }else{
-        setIsSubscriptionActive(true)
+        let userid = userverify?.[0]?.[0]?._id
+        dispatch(CheckSubscription(userid)).then((res)=>{
+          console.log(res);
+          
+          if(res.payload === undefined){
+           setIsSubscriptionActive(false);
+          }else{
+            setIsSubscriptionActive(true);
+          }
+        }).catch((data)=>{  
+        })
       }
       
       dispatch(getCart(datas))  

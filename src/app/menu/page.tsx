@@ -8,14 +8,17 @@ import React, { useEffect, useState } from 'react'
 import food from "@/Assets/food.jpg"
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
-import { AddToCart, getCart, getProductsdata, userVerify } from '@/Redux/Slices/User/userSlice';
+import { AddToCart, CheckSubscription, deleteCart, getCart, getProductsdata, userVerify } from '@/Redux/Slices/User/userSlice';
 import { useSelector } from 'react-redux';
 import Product from '@/Components/AddProduct/Product';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface CartData{
   productimage: string;
   productname: string;
   price: number;
+  _id:string
 }
 
 interface Product {
@@ -41,16 +44,30 @@ type UserVerifyResponse = User[][]
 
 const Page = () => {
 
+  const router = useRouter();
+
    const [cartsidebar,setcartSidebar] = useState(false);
-  const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
+  const [isSubscriptionActive, setIsSubscriptionActive] = useState(false);
   const { getproducts } = useSelector((state: RootState) => state.User) as { getproducts: GetProductsResponse };
   const { getcart } = useSelector((state: RootState) => state.User) as { getcart: CartData[] };
+  const {subscription} = useSelector((state:RootState)=>state.User);
   const dispatch = useAppDispatch();
   const { userverify } = useSelector((state: RootState) => state.User) as { userverify: UserVerifyResponse };
+  const { deletecart } = useSelector((state:RootState)=>state.User)
       // console.log("userverify",userverify);
 
+      console.log(getcart);
+      
 
-  console.log(getproducts);
+      
+      
+     
+      
+    const DeleteCart = (id:any)=>{
+      dispatch(deleteCart(id))
+    }
+
+  // console.log(getproducts);
 
    const menu = getproducts?.[0]?.filter((foodItem:any,index:number)=>{
         if(index > 2){
@@ -63,15 +80,30 @@ const Page = () => {
     if(userverify?.[0] == undefined){
       setloginpopup(true)
     }else{
+      let userid = userverify?.[0]?.[0]?._id;
+      console.log(userid);
+   
+      dispatch(CheckSubscription(userid)).then((res)=>{
+        console.log(res);
 
-      const data={
-        userid:userverify?.[0][0]._id,
-        productname:order?.productname,
-        productimage:order?.productimage,
-        price:order?.price
-      }
+        console.log(subscription);
+        
+        if(res.payload == "Not Subscribed"){
+         return router.push("/subscription");
+        }else{
+          
+          const data={
+            userid:userverify?.[0][0]._id,
+            productname:order?.productname,
+            productimage:order?.productimage,
+            price:order?.price
+          }
+    
+          dispatch(AddToCart(data))
+        }
+      })
 
-      dispatch(AddToCart(data))
+     
       
     }
    }
@@ -86,7 +118,7 @@ const Page = () => {
 
   const getData = ()=>{
         let datas = userverify?.[0]?.[0]?._id
-        console.log(datas);
+        // console.log(datas);
   
         if(userverify?.[0] == undefined){
            setIsSubscriptionActive(false)
@@ -101,13 +133,11 @@ const Page = () => {
 
    useEffect(()=> {
     getData();
-   },[userverify])
+   },[userverify,deletecart])
 
-   useEffect(()=>{
-   console.log("data");
-   
-   },[getcart])
-       
+  
+
+
 
     const menuItems = [
         {
@@ -267,7 +297,7 @@ const Page = () => {
       {/* Content Section */}
       <div className="p-6">
        {
-        isSubscriptionActive &&  <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
+        getcart?.[0] !== null && isSubscriptionActive? <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center space-x-4 h-full">
           <img src={getcart?.[0]?.productimage} className='h-40' ></img>
           <div>
@@ -281,18 +311,21 @@ const Page = () => {
                   Free
                 </span>
               )}
+              
             </div>
           </div>
+          
         </div>
+        
         <button
           onClick={() => {
             // logic to remove item
           }}
           className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
         >
-          <X size={20} />
+          <X size={20} onClick={()=>{DeleteCart(getcart?.[0]?._id)}}/>
         </button>
-      </div>
+      </div> : ""
        }
       </div>
 

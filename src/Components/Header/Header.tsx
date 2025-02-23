@@ -51,14 +51,14 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
   const { userverify } = useSelector((state:RootState) => state.User) as  { userverify : User};
   // console.log(logout);
  
-  console.log(userverify?.[0]?.[0]?._id);
+  // console.log(userverify?.[0]?.[0]?._id);
 
    const { getproducts } = useSelector((state:RootState)=>state.User) as {  getproducts : GetProductResponse };
   // console.log(getproducts);
 
  const {getcart} = useSelector((state:RootState)=>state.User);
  const {addtocart} = useSelector((state:RootState)=>state.User);
-  console.log(getcart);
+  // console.log(getcart);
 
    
 
@@ -73,7 +73,7 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
 
   const getData = ()=>{
     let datas = userverify?.[0]?.[0]?._id
-    console.log(datas);
+    // console.log(datas);
     
     dispatch(getCart(datas))  
     

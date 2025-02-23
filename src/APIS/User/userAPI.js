@@ -37,13 +37,13 @@ export const addtocartAPI = async(data,header)=>{
 }
 
 export const getcartAPI = async(data,header)=>{
-    console.log(data);
+    // console.log(data);
     
     return await commonrequest("GET",`${BASE_URL}/user/api/getcart/${data}`,data,header,"user");
 }
 
 export const deletecartAPI = async(data,header)=>{
-    return await commonrequest("DELETE",`${BASE_URL}/user/api/deletecart`,data,header,"");
+    return await commonrequest("DELETE",`${BASE_URL}/user/api/deletecart/${data}`,{},header,"");
 }
 
 
@@ -51,7 +51,7 @@ export const deletecartAPI = async(data,header)=>{
 // payment and order API
 
 export const checksubscriptionAPI =  async(data,header)=>{
-    return await commonrequest("GET",`${BASE_URL}/user/api/subscription`,data,header,"");
+    return await commonrequest("GET",`${BASE_URL}/user/api/subscription/${data}`,"",header,"");
 }
 
 export const getsubscriptionAPI =  async(data,header)=>{

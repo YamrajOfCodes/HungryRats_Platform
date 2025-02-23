@@ -181,11 +181,11 @@ export const AddToCart = createAsyncThunk("addtocart", async (data:any) => {
 
 
 export const getCart = createAsyncThunk("getCart", async (data:any) => {
-  console.log(data);   
+  // console.log(data);   
   try {
      
     const response: any = await getcartAPI(data);
-    console.log(response);
+    // console.log(response);
     
     if (response.status == 200) {
       return response.data;
@@ -201,7 +201,7 @@ export const getCart = createAsyncThunk("getCart", async (data:any) => {
 
 
 
-export const deleteCart = createAsyncThunk("deleteCart", async (data) => {
+export const deleteCart = createAsyncThunk("deleteCart", async (data:any) => {
   try {
     const response: any = await deletecartAPI(data);
     if (response.status == 200) {
@@ -219,14 +219,19 @@ export const deleteCart = createAsyncThunk("deleteCart", async (data) => {
 export const CheckSubscription = createAsyncThunk("checksubscription",async(data:string)=>{
   try {
     const response:any  =  await checksubscriptionAPI(data);
+    console.log(response);
+    
     if(response.status == 200){
-      return response.data;
+      // console.log(response.data);
+      
+      return response.response.data;
       
     }else{
-      return response.data; 
+      // console.log(response.response.data);
+      return response.response.data; 
     }
   } catch (error) {
-    console.log(error);
+    
     
   }
 })

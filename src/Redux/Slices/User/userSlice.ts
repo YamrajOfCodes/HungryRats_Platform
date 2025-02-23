@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { addproductAPI, addtocartAPI, checksubscriptionAPI, deletecartAPI, getallproductsAPI, getcartAPI, getsubscriptionAPI, userLoginAPI, userLogoutAPI, userRegisterAPI, userverifyAPI } from "../../../APIS/User/userAPI";
+import { addproductAPI, addtocartAPI, checksubscriptionAPI, contactAPI, deletecartAPI, getallproductsAPI, getcartAPI, getsubscriptionAPI, userLoginAPI, userLogoutAPI, userRegisterAPI, userverifyAPI } from "../../../APIS/User/userAPI";
 import toast from "react-hot-toast";
 
 
@@ -27,6 +27,7 @@ interface Userstate {
   deletecart: unknown[]
   subscription:unknown[]
   subscribe:unknown[]
+  contact:unknown[]
 }
 
 const initialState: Userstate = {
@@ -42,7 +43,8 @@ const initialState: Userstate = {
   getcart: [],
   deletecart: [],
   subscription:[],
-  subscribe:[]
+  subscribe:[],
+  contact:[],
 }
 
 interface Data {
@@ -247,6 +249,24 @@ export const Subscribe = createAsyncThunk("subscribe",async(data:any)=>{
   }
 })
 
+
+export const Contact = createAsyncThunk("contact",async(data:any)=>{
+  try {
+    const response:any  =  await contactAPI(data);
+    if(response.status == 200){
+      toast.success("Thanks For Contacting Us");
+      return response.data;
+      
+    }else{
+      console.log(response.data);
+      return response.data; 
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+})
+
 export const UserSlice = createSlice({
   name: "userslice",
   initialState,
@@ -397,6 +417,27 @@ export const UserSlice = createSlice({
           state.loader = false;
           state.error = action.error.message || null
         })
+
+
+
+
+
+
+
+        //contact
+
+
+        builders.addCase(Contact.pending, (state) => {
+          state.loader = true
+        })
+          .addCase(Contact.fulfilled, (state, action: PayloadAction<any>) => {
+            state.loader = false;
+            state.contact = [action.payload]
+          })
+          .addCase(Contact.rejected, (state, action) => {
+            state.loader = false;
+            state.error = action.error.message || null
+          })
 
 
   }

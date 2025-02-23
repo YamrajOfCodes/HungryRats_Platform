@@ -10,7 +10,8 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/Redux/App/store';
 import { useAppDispatch } from '@/hooks';
-import { getCart, userVerify } from '@/Redux/Slices/User/userSlice';
+import { Contact, getCart, userVerify } from '@/Redux/Slices/User/userSlice';
+import toast from 'react-hot-toast';
 
 
 
@@ -43,6 +44,58 @@ interface Data{
       const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
       const { userverify } = useSelector((state: RootState) => state.User) as { userverify: UserVerifyResponse };
       const dispatch = useAppDispatch();
+
+    
+      const [name,setname] = useState("");
+      const [email,setemail] = useState("");
+      const [subject,setsubject] = useState("");
+      const [message,setmessage] = useState("");
+
+
+   
+      const handleChange = (label:string,value:string)=>{
+        if(label == "email"){
+          setemail(value)
+        }else if(label == "name"){
+          setname(value);
+        }else{
+          setsubject(value)
+        }
+      }
+
+      const handleContactsubmit = (e:any)=>{
+        e.preventDefault();
+
+        if(name === ""){
+         return toast.error("name is required");
+        }else if(email === ""){
+        return  toast.error("Email is required");
+        }else if(!email.includes("@")){
+         return toast.error("please enter valid email");
+        }else if(subject === ""){
+         return toast.error("subject is required")
+        }else if(message === ""){
+         return toast.error("Kindly enter your message")
+        }else{
+          // console.log(name,email,subject,message);
+          const data = {
+            name,
+            email,
+            subject,
+            message
+          }
+          dispatch(Contact(data)).then((res)=>{
+            if(res.payload){
+              setname("");
+              setemail("");
+              setsubject("");
+              setmessage("");
+            }
+          })
+
+        }
+        
+      }
 
 
 
@@ -175,14 +228,17 @@ interface Data{
           <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg p-8 transform transition-all duration-500 hover:shadow-2xl border border-gray-100">
             <form className="space-y-8">
               <div className="space-y-6">
-                {['Name', 'Email', 'Subject'].map((label) => (
+                {['name', 'email', 'subject'].map((label) => (
                   <div key={label} className="relative group">
                     <input
-                      type={label === 'Email' ? 'email' : 'text'}
+                      type={label === 'email' ? 'email' : 'text'}
                       className="w-full px-5 py-4 rounded-xl bg-gray-50/50 border-2 border-gray-100 focus:border-blue-500 outline-none transition-all duration-300 peer"
                       placeholder=" "
                       onFocus={() => setFocusedInput(label)}
                       onBlur={() => setFocusedInput(null)}
+                      name={label}
+                      value={label === "email" ? email : label === "name"?   name  : subject}
+                      onChange={(e)=>{handleChange(label,e.target.value)}}
                     />
                     <label className={`absolute left-5 transition-all duration-300 pointer-events-none
                       ${focusedInput === label ? 
@@ -199,6 +255,8 @@ interface Data{
                     placeholder=" "
                     onFocus={() => setFocusedInput('Message')}
                     onBlur={() => setFocusedInput(null)}
+                    value={message}
+                    onChange={(e)=>{setmessage(e.target.value)}}
                   />
                   <label className={`absolute left-5 transition-all duration-300 pointer-events-none
                     ${focusedInput === 'Message' ? 
@@ -209,7 +267,7 @@ interface Data{
                   </label>
                 </div>
               </div>
-              <button className="group w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-4 rounded-xl font-medium tracking-wide transform transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg flex items-center justify-center gap-3">
+              <button className="group w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-4 rounded-xl font-medium tracking-wide transform transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg flex items-center justify-center gap-3" onClick={handleContactsubmit}>
                 Send Message
                 <Send className="w-5 h-5 transform transition-transform group-hover:translate-x-1" />
               </button>

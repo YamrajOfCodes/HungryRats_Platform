@@ -57,3 +57,14 @@ export const checksubscriptionAPI =  async(data,header)=>{
 export const getsubscriptionAPI =  async(data,header)=>{
     return await commonrequest("POST",`${BASE_URL}/user/api/subscribe`,data,header,"");
 }
+
+
+
+
+
+
+// messgaeAPI
+
+export const contactAPI = async(data,header)=>{
+    return await commonrequest("POST",`${BASE_URL}/user/api/message`,data,header,"");
+}

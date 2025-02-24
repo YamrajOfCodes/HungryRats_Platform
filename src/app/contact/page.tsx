@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/Redux/App/store';
 import { useAppDispatch } from '@/hooks';
-import { Contact, getCart, userVerify } from '@/Redux/Slices/User/userSlice';
+import { CheckSubscription, Contact, deleteCart, getCart, userVerify } from '@/Redux/Slices/User/userSlice';
 import toast from 'react-hot-toast';
 
 
@@ -19,6 +19,7 @@ interface CartItem {
   productimage: string;
   productname: string;
   price: number;
+  _id:string;
 }
 
 interface User {
@@ -51,6 +52,10 @@ interface Data{
       const [subject,setsubject] = useState("");
       const [message,setmessage] = useState("");
 
+            
+          const DeleteCart = (id:any)=>{
+            dispatch(deleteCart(id))
+          }
 
    
       const handleChange = (label:string,value:string)=>{
@@ -101,20 +106,35 @@ interface Data{
 
       const { getcart } = useSelector((state: RootState) => state.User) as { getcart: CartItem[] };
       
-                 const getData = ()=>{
-                       let datas = userverify?.[0]?.[0]?._id
-                       console.log(datas);
-                 
-                       if(userverify?.[0] == undefined){
-                          setIsSubscriptionActive(false)
-                       }else{
-                         setIsSubscriptionActive(true)
-                       }
-                       
-                       dispatch(getCart(datas))  
-                       
+                       const getData = ()=>{
+                        let datas = userverify?.[0]?.[0]?._id
+                        console.log(datas);
+                        dispatch(CheckSubscription(datas)).then((res)=>{
+                         console.log(res);
+                                     
+                       })
+               
+                        if(userverify?.[0] == undefined  ){
+                        setIsSubscriptionActive(false)
+                     }else{
+                       let userid = userverify?.[0]?.[0]?._id
+                       dispatch(CheckSubscription(userid)).then((res)=>{
+                         console.log(res);
                      
+                         
+                         if(res.payload === "Not Subscribed" || res.payload == undefined){
+                          setIsSubscriptionActive(false);
+                         }else{
+                           setIsSubscriptionActive(true);
+                         }
+                       }).catch((data)=>{  
+                       })
                      }
+                     
+                     dispatch(getCart(datas))  
+                     
+                   
+                   }
                       
                      
             
@@ -359,7 +379,7 @@ interface Data{
 
 
     {/* CartSidebar */}
-  <div 
+ <div 
       className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] 
         ${cartsidebar ? "translate-x-0" : "translate-x-full"} 
         transition-transform duration-500 ease-in-out z-50 
@@ -402,7 +422,7 @@ interface Data{
       {/* Content Section */}
       <div className="p-6">
        {
-        isSubscriptionActive &&  <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
+        getcart?.[0] !== null && isSubscriptionActive? <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center space-x-4 h-full">
           <img src={getcart?.[0]?.productimage} className='h-40' ></img>
           <div>
@@ -416,18 +436,21 @@ interface Data{
                   Free
                 </span>
               )}
+              
             </div>
           </div>
+          
         </div>
+        
         <button
           onClick={() => {
             // logic to remove item
           }}
           className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
         >
-          <X size={20} />
+          <X size={20} onClick={()=>{DeleteCart(getcart?.[0]?._id)}}/>
         </button>
-      </div>
+      </div> : ""
        }
       </div>
 
@@ -453,7 +476,6 @@ interface Data{
         </button>
       </div>
     </div>
-
    </>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Facebook, Twitter, Instagram, Youtube, Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Phone, Mail, MapPin, ArrowRight, Linkedin } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -27,14 +28,14 @@ const Footer = () => {
               <span className="absolute -bottom-2 left-0 w-12 h-1 bg-orange-500 rounded-full"></span>
             </h4>
             <ul className="space-y-3">
-              {['About Us', 'Our Menu', 'Special Offers', 'Restaurants', 'Track Order'].map((link) => (
+              {['Our Menu', 'Special Offers', 'Restaurants'].map((link) => (
                 <li key={link} className="group">
-                  <a href="#" className="inline-flex items-center hover:text-white transition-colors">
+                  <Link href="/menu" className="inline-flex items-center hover:text-white transition-colors">
                     <span className="transform group-hover:translate-x-2 transition-transform">
                       {link}
                     </span>
                     <ArrowRight className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -48,9 +49,9 @@ const Footer = () => {
             </h4>
             <div className="space-y-4">
               {[
-                { icon: Phone, text: '+1 (555) 123-4567' },
-                { icon: Mail, text: 'support@foodieexpress.com' },
-                { icon: MapPin, text: '123 Delivery Street, Food City' }
+                { icon: Phone, text: '+91 9960322509' },
+                { icon: Mail, text: 'officialhungryrats@gmail.com' },
+                { icon: MapPin, text: '24, Shree Swami Samarth nagar, Yawal' }
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center space-x-3 group">
                   <div className="p-2 bg-gray-800 rounded-lg group-hover:bg-orange-500 transition-colors">
@@ -70,18 +71,18 @@ const Footer = () => {
             </h4>
             <div className="flex space-x-4">
               {[
-                { icon: Facebook, color: 'hover:bg-blue-600' },
-                { icon: Twitter, color: 'hover:bg-blue-400' },
-                { icon: Instagram, color: 'hover:bg-pink-600' },
-                { icon: Youtube, color: 'hover:bg-red-600' }
-              ].map(({ icon: Icon, color }, index) => (
-                <a
+                { icon: Twitter, color: 'hover:bg-blue-400'  , link:" https://twitter.com/Kundanp82985546?t=pPZhQJuYEOS88rlX2Rc7NA&s=08"},
+                { icon: Instagram, color: 'hover:bg-pink-600' , link:"https://www.instagram.com/officialhungryrats/" },
+                { icon: Youtube, color: 'hover:bg-red-600' , link:"#" },
+                { icon: Linkedin, color: 'hover:bg-red-600' , link:"https://www.linkedin.com/in/kundan-patil-a22206293/" }
+              ].map(({ icon: Icon, color, link }, index) => (
+                <Link
                   key={index}
-                  href="#"
+                  href={link}
                   className={`p-3 bg-gray-800 rounded-lg transition-all hover:-translate-y-1 ${color}`}
                 >
                   <Icon className="w-5 h-5" />
-                </a>
+                </Link>
               ))}
             </div>
           </div>

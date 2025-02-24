@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { addproductAPI, addtocartAPI, checksubscriptionAPI, contactAPI, deletecartAPI, getallproductsAPI, getcartAPI, getsubscriptionAPI, userLoginAPI, userLogoutAPI, userRegisterAPI, userverifyAPI } from "../../../APIS/User/userAPI";
+import { addproductAPI, addtocartAPI, checksubscriptionAPI, contactAPI, deletecartAPI, getallproductsAPI, getcartAPI, getsubscriptionAPI, postorderAPI, userLoginAPI, userLogoutAPI, userRegisterAPI, userverifyAPI } from "../../../APIS/User/userAPI";
 import toast from "react-hot-toast";
 
 
@@ -28,6 +28,7 @@ interface Userstate {
   subscription:unknown[]
   subscribe:unknown[]
   contact:unknown[]
+  postorder:unknown[]
 }
 
 const initialState: Userstate = {
@@ -45,6 +46,7 @@ const initialState: Userstate = {
   subscription:[],
   subscribe:[],
   contact:[],
+  postorder:[]
 }
 
 interface Data {
@@ -224,7 +226,7 @@ export const CheckSubscription = createAsyncThunk("checksubscription",async(data
     if(response.status == 200){
       // console.log(response.data);
       
-      return response.response.data;
+      return response.data;
       
     }else{
       // console.log(response.response.data);
@@ -268,6 +270,23 @@ export const Contact = createAsyncThunk("contact",async(data:any)=>{
     }
   } catch (error) {
     console.log(error);
+    
+  }
+})
+
+
+export const PostOrder = createAsyncThunk("createorder",async(data:any)=>{
+  try {
+    const response:any = await postorderAPI(data)
+    if(response.status == 200){
+      toast.success("Order is placed");
+      return response.data
+    }else{
+      console.log(response);
+      return response.data
+      
+    }
+  } catch (error) {
     
   }
 })
@@ -423,7 +442,21 @@ export const UserSlice = createSlice({
           state.error = action.error.message || null
         })
 
+         
+        // Create Order
 
+
+        builders.addCase(PostOrder.pending, (state) => {
+          state.loader = true
+        })
+          .addCase(PostOrder.fulfilled, (state, action: PayloadAction<any>) => {
+            state.loader = false;
+            state.postorder = [action.payload]
+          })
+          .addCase(PostOrder.rejected, (state, action) => {
+            state.loader = false;
+            state.error = action.error.message || null
+          })
 
 
 

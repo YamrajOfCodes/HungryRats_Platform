@@ -59,6 +59,10 @@ export const getsubscriptionAPI =  async(data,header)=>{
 }
 
 
+export const postorderAPI =  async(data,header)=>{
+    return await commonrequest("POST",`${BASE_URL}/product/api/orders/${data.id}`,data,header,"");
+}
+
 
 
 

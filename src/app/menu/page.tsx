@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 import food from "@/Assets/food.jpg"
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
-import { AddToCart, CheckSubscription, deleteCart, getCart, getProductsdata, userVerify } from '@/Redux/Slices/User/userSlice';
+import { AddToCart, CheckSubscription, deleteCart, getCart, getProductsdata, PostOrder, userVerify } from '@/Redux/Slices/User/userSlice';
 import { useSelector } from 'react-redux';
 import Product from '@/Components/AddProduct/Product';
 import toast from 'react-hot-toast';
@@ -38,6 +38,8 @@ interface User {
   _id: string;
   name?: string; // Add other user properties as needed
   email?: string;
+  Firstname?:string;
+  mobile?:string;
 }
 
 type UserVerifyResponse = User[][]
@@ -74,6 +76,37 @@ const Page = () => {
           return foodItem
         }
    })
+
+   const placedOrder = ()=>{
+    let Firstname =  userverify?.[0]?.[0]?.Firstname;
+    let mobile =  userverify?.[0]?.[0]?.mobile;
+    let productname = getcart?.[0]?.productname;
+    let price = getcart?.[0]?.price;
+    let id = userverify?.[0]?.[0]?._id;
+
+    const data = {
+      id,
+      Firstname,
+      mobile,
+      productname,
+      price
+    }
+    console.log(data);
+    
+
+    dispatch(PostOrder(data)).then((res)=>{
+      if(res.payload){
+        dispatch(getCart(getcart?.[0]?._id))
+      }else{
+        toast.error("Order is already placed")
+        
+      }
+    }).catch((error)=>{
+     
+      
+    })
+    
+   }
 
    const handleOrder = (order:any)=>{
 
@@ -116,20 +149,35 @@ const Page = () => {
     dispatch(userVerify())
   },[])
 
-  const getData = ()=>{
-        let datas = userverify?.[0]?.[0]?._id
-        // console.log(datas);
-  
-        if(userverify?.[0] == undefined){
-           setIsSubscriptionActive(false)
-        }else{
-          setIsSubscriptionActive(true)
-        }
-        
-        dispatch(getCart(datas))  
-        
-      
-      }
+         const getData = ()=>{
+          let datas = userverify?.[0]?.[0]?._id
+          console.log(datas);
+          dispatch(CheckSubscription(datas)).then((res)=>{
+           console.log(res);
+           console.log(subscription);             
+         })
+ 
+          if(userverify?.[0] == undefined  ){
+          setIsSubscriptionActive(false)
+       }else{
+         let userid = userverify?.[0]?.[0]?._id
+         dispatch(CheckSubscription(userid)).then((res)=>{
+           console.log(res);
+           console.log(subscription);
+           
+           if(res.payload === "Not Subscribed" || res.payload == undefined){
+            setIsSubscriptionActive(false);
+           }else{
+             setIsSubscriptionActive(true);
+           }
+         }).catch((data)=>{  
+         })
+       }
+       
+       dispatch(getCart(datas))  
+       
+     
+     }
 
    useEffect(()=> {
     getData();
@@ -346,6 +394,7 @@ const Page = () => {
               : 'bg-gray-400 cursor-not-allowed'
             }`}
           disabled={!isSubscriptionActive}
+          onClick={placedOrder}
         >
           {isSubscriptionActive ? 'Order Now' : 'Activate Subscription'}
         </button>

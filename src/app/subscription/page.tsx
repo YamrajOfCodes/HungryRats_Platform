@@ -136,7 +136,7 @@ const page = () => {
 
   const handlePayment = async (price:any) => {
    let orderId = Math. floor(Math. random() * (9999999999 - 100000000 + 1)) + 1000000000
-    const apiUrl = 'http://localhost:4000/user/api/payment';
+    const apiUrl = 'https://back-repo.onrender.com/user/api/payment';
     const postData = {
         customer_mobile: '8956903018',
         user_token: '31b8e247b5b4bdc8cc6769cb32db3cd3',

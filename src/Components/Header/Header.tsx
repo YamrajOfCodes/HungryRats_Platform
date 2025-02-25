@@ -43,7 +43,7 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
 
   const [sidebar, setSidebar] = useState(false);
   const handleSidebar = () => setSidebar(!sidebar);
-  const token  = localStorage.getItem("login");
+ 
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -162,7 +162,8 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
             <Search className="h-4 w-4 text-white/70" />
             <input 
               placeholder="Search for food..."
-              className="bg-transparent border-none text-white placeholder-white/70 text-sm focus:outline-none px-3 w-48"
+              className="bg-transparent border-none text-white placeholder-white/70 text-sm focus:outline-none px-3 w-48  hover:cursor-progress"
+              disabled
             />
           </div>
           
@@ -267,7 +268,8 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
             <Search className="h-4 w-4 text-white/70" />
             <input 
               placeholder="Search for food..."
-              className="bg-transparent border-none text-white placeholder-white/70 text-sm focus:outline-none px-3 w-48"
+              className="bg-transparent border-none text-white placeholder-white/70 text-sm focus:outline-none px-3 w-48 hover:cursor-progress"
+              disabled
             />
           </div>
           

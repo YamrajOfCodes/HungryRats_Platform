@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { addproductAPI, addtocartAPI, checksubscriptionAPI, contactAPI, deletecartAPI, getallproductsAPI, getcartAPI, getsubscriptionAPI, postorderAPI, userLoginAPI, userLogoutAPI, userRegisterAPI, userverifyAPI } from "../../../APIS/User/userAPI";
+import { addproductAPI, addtocartAPI, checksubscriptionAPI, contactAPI, deletecartAPI, deleteorderAPI, deleteproductAPI, deleteuserAPI, getallCustomersAPI, getallproductsAPI, getcartAPI, getordersAPI, getsubscriptionAPI, postorderAPI, userLoginAPI, userLogoutAPI, userRegisterAPI, userverifyAPI } from "../../../APIS/User/userAPI";
 import toast from "react-hot-toast";
 
 
@@ -20,6 +20,7 @@ interface Userstate {
   login: unknown[],
   addproduct: unknown[]
   getproducts: unknown[],
+  deleteproduct:unknown[]
   logout: unknown[]
   userverify: unknown[]
   addtocart: unknown[]
@@ -29,6 +30,10 @@ interface Userstate {
   subscribe:unknown[]
   contact:unknown[]
   postorder:unknown[]
+  getallusers:unknown[]
+  getorders:unknown[]
+  deleteuser:unknown[]
+  deleteorder:unknown[]
 }
 
 const initialState: Userstate = {
@@ -38,6 +43,7 @@ const initialState: Userstate = {
   login: [],
   addproduct: [],
   getproducts: [],
+  deleteproduct:[],
   logout: [],
   userverify: [],
   addtocart: [],
@@ -46,7 +52,11 @@ const initialState: Userstate = {
   subscription:[],
   subscribe:[],
   contact:[],
-  postorder:[]
+  postorder:[],
+  getallusers:[],
+  getorders:[],
+  deleteuser:[],
+  deleteorder:[]
 }
 
 interface Data {
@@ -161,6 +171,20 @@ export const getProductsdata = createAsyncThunk("getallproducts", async () => {
 })
 
 
+export const deleteProduct = createAsyncThunk("deleteproduct",async(data:string)=>{
+  try {
+    const response:any = await deleteproductAPI(data);
+    if(response.status == 200){
+     return response.data
+    }
+  } catch (error) {
+   console.log(error);
+   
+  }
+})
+
+
+
 // CartAPI
 
 export const AddToCart = createAsyncThunk("addtocart", async (data:any) => {
@@ -221,7 +245,7 @@ export const deleteCart = createAsyncThunk("deleteCart", async (data:any) => {
 export const CheckSubscription = createAsyncThunk("checksubscription",async(data:string)=>{
   try {
     const response:any  =  await checksubscriptionAPI(data);
-    console.log(response);
+    // console.log(response);
     
     if(response.status == 200){
       // console.log(response.data);
@@ -290,6 +314,57 @@ export const PostOrder = createAsyncThunk("createorder",async(data:any)=>{
     
   }
 })
+
+export const getUsers = createAsyncThunk("getallusers",async()=>{
+  try {
+    const response:any = await getallCustomersAPI();
+    if(response.status==200){
+      return response.data
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+})
+
+export const getOrders = createAsyncThunk("getorders",async()=>{
+  try {
+    const response:any  = await getordersAPI();
+    if(response.status == 200){
+      return response.data
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+})
+
+export const deleteUser = createAsyncThunk("deleteuser",async(data:string)=>{
+   try {
+     const response:any = await deleteuserAPI(data);
+     if(response.status == 200){
+      return response.data
+     }
+   } catch (error) {
+    console.log(error);
+    
+   }
+})
+
+
+
+export const deleteOrder = createAsyncThunk("deleteorder",async(data:string)=>{
+  try {
+    const response:any = await deleteorderAPI(data);
+    if(response.status == 200){
+     return response.data
+    }
+  } catch (error) {
+   console.log(error);
+   
+  }
+})
+
 
 export const UserSlice = createSlice({
   name: "userslice",
@@ -476,6 +551,80 @@ export const UserSlice = createSlice({
             state.loader = false;
             state.error = action.error.message || null
           })
+
+
+          //getusers
+
+          builders.addCase(getUsers.pending, (state) => {
+            state.loader = true
+          })
+            .addCase(getUsers.fulfilled, (state, action: PayloadAction<any>) => {
+              state.loader = false;
+              state.getallusers = [action.payload]
+            })
+            .addCase(getUsers.rejected, (state, action) => {
+              state.loader = false;
+              state.error = action.error.message || null
+            })
+
+
+            //getorder
+
+            builders.addCase(getOrders.pending, (state) => {
+              state.loader = true
+            })
+              .addCase(getOrders.fulfilled, (state, action: PayloadAction<any>) => {
+                state.loader = false;
+                state.getorders = [action.payload]
+              })
+              .addCase(getOrders.rejected, (state, action) => {
+                state.loader = false;
+                state.error = action.error.message || null
+              })
+
+              //deleteuser
+
+              builders.addCase(deleteUser.pending, (state) => {
+                state.loader = true
+              })
+                .addCase(deleteUser.fulfilled, (state, action: PayloadAction<any>) => {
+                  state.loader = false;
+                  state.deleteuser = [action.payload]
+                })
+                .addCase(deleteUser.rejected, (state, action) => {
+                  state.loader = false;
+                  state.error = action.error.message || null
+                })
+
+
+                
+              builders.addCase(deleteOrder.pending, (state) => {
+                state.loader = true
+              })
+                .addCase(deleteOrder.fulfilled, (state, action: PayloadAction<any>) => {
+                  state.loader = false;
+                  state.deleteorder = [action.payload]
+                })
+                .addCase(deleteOrder.rejected, (state, action) => {
+                  state.loader = false;
+                  state.error = action.error.message || null
+                })
+
+
+
+                builders.addCase(deleteProduct.pending, (state) => {
+                  state.loader = true
+                })
+                  .addCase(deleteProduct.fulfilled, (state, action: PayloadAction<any>) => {
+                    state.loader = false;
+                    state.deleteproduct = [action.payload]
+                  })
+                  .addCase(deleteProduct.rejected, (state, action) => {
+                    state.loader = false;
+                    state.error = action.error.message || null
+                  })
+
+
 
 
   }

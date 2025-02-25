@@ -28,6 +28,11 @@ export const getallproductsAPI = async(data,header)=>{
     return await commonrequest("GET",`${BASE_URL}/product/api/getallproducts`,"",header,"");
 }
 
+export const deleteproductAPI = async(data,header)=>{
+    return await commonrequest("DELETE",`${BASE_URL}/product/api/deleteproduct/${data}`,{},header,"");
+}
+
+
 
 // cartAPI
 
@@ -72,3 +77,31 @@ export const postorderAPI =  async(data,header)=>{
 export const contactAPI = async(data,header)=>{
     return await commonrequest("POST",`${BASE_URL}/user/api/message`,data,header,"");
 }
+
+
+
+
+
+//Admin API
+
+export const getallCustomersAPI = async(data,header)=>{
+    return await commonrequest("GET",`${BASE_URL}/admin/api/getallusers`,"",header,"");
+}
+
+export const getordersAPI = async(data,header)=>{
+    return await commonrequest("GET",`${BASE_URL}/admin/api/getorders`,"",header,"");
+}
+
+
+
+export const deleteuserAPI = async(data,header)=>{
+    return await commonrequest("DELETE",`${BASE_URL}/admin/api/deleteuser/${data}`,{},header,"");
+}
+
+export const deleteorderAPI = async(data,header)=>{
+    return await commonrequest("DELETE",`${BASE_URL}/admin/api/deleteorder/
+        
+        ${data}`,{},header,"");
+}
+
+

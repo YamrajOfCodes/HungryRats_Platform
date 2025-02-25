@@ -206,9 +206,9 @@ const SubscriptionFlow = () => {
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-16">Choose Your Meal Plan</h1>
               <div className="space-y-6 md:space-y-0 md:grid md:grid-cols-3 md:gap-8 md:max-w-6xl md:mx-auto">
                 {[
-                  { name: 'Starter', price: 49, meals: 10, highlight: false },
-                  { name: 'Pro', price: 99, meals: 25, highlight: true },
-                  { name: 'Ultimate', price: 149, meals: 40, highlight: false }
+                  { name: 'Starter', price: 4999, meals: 56, highlight: false },
+                  { name: 'Pro', price: 8999, meals: 106, highlight: true },
+                  { name: 'Ultimate', price: 12999, meals: 214, highlight: false }
                 ].map((plan) => (
                   <div
                     key={plan.name}
@@ -221,7 +221,7 @@ const SubscriptionFlow = () => {
                   >
                     <CreditCard className="mx-auto w-12 h-12 md:w-16 md:h-16 mb-4 text-cyan-500" />
                     <h3 className="text-xl md:text-2xl font-bold mb-2">{plan.name}</h3>
-                    <p className="text-3xl md:text-4xl font-extrabold mb-4 text-cyan-600">${plan.price}</p>
+                    <p className="text-2xl md:text-3xl font-extrabold mb-4 text-cyan-600">Rs{plan.price}</p>
                     <p className="mb-4 text-gray-600 md:text-lg">{plan.meals} Meals per Month</p>
                     <button
                       onClick={() => setCurrentStep(3)}
@@ -245,9 +245,9 @@ const SubscriptionFlow = () => {
               <h1 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-16">Select Your Daily Meal</h1>
               <div className="space-y-6 md:space-y-0 md:grid md:grid-cols-3 md:gap-8 md:max-w-6xl md:mx-auto">
                 {[
-                  { name: 'Protein Power', type: 'High Protein', color: 'bg-orange-50', icon: 'text-orange-500' },
-                  { name: 'Veggie Delight', type: 'Vegetarian', color: 'bg-green-50', icon: 'text-green-500' },
-                  { name: 'Balanced Bowl', type: 'Balanced Nutrition', color: 'bg-blue-50', icon: 'text-blue-500' }
+                  { name: 'palak paneer', type: 'High Protein', color: 'bg-green-50', icon: 'text-orange-500' },
+                  { name: 'Veggie Delight', type: 'Vegetarian', color: 'bg-blue-50', icon: 'text-green-500' },
+                  { name: 'Mutter Paneer', type: 'Balanced Nutrition', color: 'bg-orange-50', icon: 'text-blue-500' }
                 ].map((meal) => (
                   <div
                     key={meal.name}

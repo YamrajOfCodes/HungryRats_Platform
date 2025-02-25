@@ -57,12 +57,12 @@ const page = () => {
   const { getproducts } = useSelector((state:RootState)=>state.User) as {  getproducts : GetProductResponse };
   // console.log(getproducts);
   const { getcart } = useSelector((state:RootState)=>state.User) as { getcart : Cart[] };
-  console.log(getcart);
+  // console.log(getcart);
 
 
   const getData = ()=>{
       let datas = userverify?.[0]?.[0]?._id
-      console.log(datas);
+      // console.log(datas);
 
       if(userverify?.[0] == undefined){
          setIsSubscriptionActive(false)
@@ -102,7 +102,7 @@ const page = () => {
         }
    })
 
-   console.log(menu);
+  //  console.log(menu);
    
   
 
@@ -115,13 +115,13 @@ const page = () => {
   }
 
   const handleLoginpopup = (e:any)=>{
-    setpopup("login")
+    // setpopup("login")
     setloginpopup(true);
       document.body.classList.add('overflow-hidden');
   }
 
   const handleSignuppopup = ()=>{
-    setpopup("signup")
+    // setpopup("signup")
     setsignuppopup(true);
       document.body.classList.add('overflow-hidden');
   }

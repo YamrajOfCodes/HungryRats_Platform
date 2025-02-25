@@ -108,9 +108,9 @@ interface Data{
       
                        const getData = ()=>{
                         let datas = userverify?.[0]?.[0]?._id
-                        console.log(datas);
+                        // console.log(datas);
                         dispatch(CheckSubscription(datas)).then((res)=>{
-                         console.log(res);
+                        //  console.log(res);
                                      
                        })
                
@@ -119,7 +119,7 @@ interface Data{
                      }else{
                        let userid = userverify?.[0]?.[0]?._id
                        dispatch(CheckSubscription(userid)).then((res)=>{
-                         console.log(res);
+                        //  console.log(res);
                      
                          
                          if(res.payload === "Not Subscribed" || res.payload == undefined){
@@ -279,9 +279,9 @@ interface Data{
                     onChange={(e)=>{setmessage(e.target.value)}}
                   />
                   <label className={`absolute left-5 transition-all duration-300 pointer-events-none
-                    ${focusedInput === 'Message' ? 
-                      'text-sm text-blue-600 -translate-y-7 translate-x-2' : 
-                      'text-gray-500 top-4 peer-focus:text-sm peer-focus:text-blue-600 peer-focus:-translate-y-7 peer-focus:translate-x-2'
+                    ${message === '' ? 
+                      'text-gray-500 top-2 peer-focus:text-sm peer-focus:text-blue-600 peer-focus:-translate-y-7 peer-focus:translate-x-2':
+                      'text-sm text-blue-600 -translate-y-7 translate-x-2'  
                     }`}>
                     {"Message"}
                   </label>

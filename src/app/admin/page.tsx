@@ -16,7 +16,9 @@ import Register from '@/Components/UserRegsistration/Register';
 import Dashboard from '@/Components/MainDashboard/Dashboard';
 import toast from 'react-hot-toast';
 
+
 const page = () => {
+  
 
     const menuItems = [
         { icon: Home, label: 'Dashboard', href: '#' },
@@ -30,6 +32,7 @@ const page = () => {
         if(data){
           setadmin(true)
         }
+
       },[])
 
        const [activeItem,setActiveItem] = useState("Dashboard");

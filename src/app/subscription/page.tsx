@@ -57,11 +57,11 @@ const page = () => {
        const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
        const {userverify} = useSelector((state:RootState)=>state.User) as { userverify : Users };
        const {subscription} = useSelector((state:RootState)=>state.User);
-       console.log(subscription);
+      //  console.log(subscription);
        
        const dispatch = useAppDispatch();
 
-       console.log("userverify",userverify);
+      //  console.log("userverify",userverify);
 
        const [response,setResponse] = useState<any>();
        const [err,setError] = useState<any>()
@@ -121,7 +121,7 @@ const page = () => {
 
       let userid = userverify?.[0]?.[0]?._id
       dispatch(CheckSubscription(userid)).then((res)=>{
-        console.log(res);
+        // console.log(res);
         
         if(res.payload !== "Already subscribed"){
           handlePayment(price);
@@ -140,7 +140,7 @@ const page = () => {
     const postData = {
         customer_mobile: '8956903018',
         user_token: '31b8e247b5b4bdc8cc6769cb32db3cd3',
-        amount:  "1",
+        amount:  price,
         order_id: orderId,
         redirect_url: 'http://localhost:3000/success-premium',
         remark1: 'testremark',
@@ -169,17 +169,17 @@ const page = () => {
 
     const sections:any = {
       explore: {
-        icon: <Utensils className="w-10 h-10 text-cyan-400" />,
+        icon: <Utensils className="w-8 h-8 text-cyan-400" />,
         title: "Explore Cuisines",
         description: "Discover restaurants near you with diverse culinary options."
       },
       track: {
-        icon: <MapPin className="w-10 h-10 text-emerald-400" />,
+        icon: <MapPin className="w-8 h-8 text-emerald-400" />,
         title: "Real-Time Tracking",
         description: "Follow your meal's journey from kitchen to doorstep."
       },
       speed: {
-        icon: <Bike className="w-10 h-10 text-indigo-400" />,
+        icon: <Bike className="w-8 h-8 text-indigo-400" />,
         title: "Lightning Fast",
         description: "Guaranteed delivery within 30 minutes or it's free."
       }
@@ -245,15 +245,15 @@ const page = () => {
 
 
           const { getcart } = useSelector((state:RootState)=>state.User) as { getcart : Carts[] };
-          console.log(getcart);
+          // console.log(getcart);
 
 
          const getData = ()=>{
          let datas = userverify?.[0]?.[0]?._id
-         console.log(datas);
+        //  console.log(datas);
          dispatch(CheckSubscription(datas)).then((res)=>{
-          console.log(res);
-          console.log(subscription);             
+          // console.log(res);
+          // console.log(subscription);             
         })
 
          if(userverify?.[0] == undefined  ){
@@ -261,8 +261,8 @@ const page = () => {
       }else{
         let userid = userverify?.[0]?.[0]?._id
         dispatch(CheckSubscription(userid)).then((res)=>{
-          console.log(res);
-          console.log(subscription);
+          // console.log(res);
+          // console.log(subscription);
           
           if(res.payload === "Not Subscribed" || res.payload == undefined){
            setIsSubscriptionActive(false);

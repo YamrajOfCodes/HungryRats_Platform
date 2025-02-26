@@ -26,19 +26,23 @@ import {  ShoppingCart, X } from 'lucide-react';
 import Image from 'next/image';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/Redux/App/store';
-import { CheckSubscription, deleteCart, getCart, getProductsdata, userVerify } from '@/Redux/Slices/User/userSlice';
+import { CheckSubscription, deleteCart, getCart, getProductsdata, PostOrder, userVerify } from '@/Redux/Slices/User/userSlice';
 import { useAppDispatch } from '@/hooks';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
+import Loader from '@/Components/Loader/Loader';
 
 
-interface User{
+
+interface User {
   _id: string;
   name?: string; // Add other user properties as needed
   email?: string;
+  Firstname?:string;
+  mobile?:string;
 }
 
-type Users = User[][];
+type UserVerifyResponse = User[][]
 
  interface Carts{
   productimage: string;
@@ -50,12 +54,13 @@ type Users = User[][];
 const page = () => {
   const [premium,setPremium] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState('1 Month');
+  const [loader,setloader] = useState(true);
     const [activeSection, setActiveSection] = useState('explore');
     const plansss = ['1 Month', '2 Months', '3 Months'];
     const [expandedSection, setExpandedSection] = useState(null);
       const [cartsidebar,setcartSidebar] = useState(false);
        const [isSubscriptionActive, setIsSubscriptionActive] = useState(true);
-       const {userverify} = useSelector((state:RootState)=>state.User) as { userverify : Users };
+       const {userverify} = useSelector((state:RootState)=>state.User) as { userverify : UserVerifyResponse };
        const {subscription} = useSelector((state:RootState)=>state.User);
       //  console.log(subscription);
        
@@ -184,6 +189,44 @@ const page = () => {
         description: "Guaranteed delivery within 30 minutes or it's free."
       }
     };
+
+    const placedOrder = ()=>{
+
+
+      if(getcart?.[0] == null){
+       return toast.error("Cart is empty");
+      }
+ 
+     let Firstname =  userverify?.[0]?.[0]?.Firstname;
+     let mobile =  userverify?.[0]?.[0]?.mobile;
+     let productname = getcart?.[0]?.productname;
+     let price = getcart?.[0]?.price;
+     let id = userverify?.[0]?.[0]?._id;
+ 
+     const data = {
+       id,
+       Firstname,
+       mobile,
+       productname,
+       price
+     }
+    //  console.log(data);
+     
+ 
+     dispatch(PostOrder(data)).then((res)=>{
+       if(res.payload){
+         dispatch(getCart(getcart?.[0]?._id))
+       }else{
+         toast.error("Order is already placed")
+         
+       }
+     }).catch((error)=>{
+      
+       
+     })
+     
+    }
+ 
   
     const plans = [
       {
@@ -283,7 +326,9 @@ const page = () => {
 
     useEffect(()=>{
       dispatch(userVerify())
-      
+      setTimeout(() => {
+        setloader(false);
+      }, 2000);
     },[])
   
     useEffect(()=>{
@@ -299,7 +344,9 @@ const page = () => {
 
     
       {/* Mobile devices */}
-     <div className="min-h-screen bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 flex flex-col items-center justify-center sm:hidden">
+    {
+      loader? <Loader/> :
+      <div className="min-h-screen bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 flex flex-col items-center justify-center sm:hidden">
       <div className="w-[90%] max-w-md overflow-hidden">
 
         {/* Subscription Plan Selector */}
@@ -398,201 +445,204 @@ const page = () => {
         </div>
       </div>
     </div>
+    }
 
      {/* Desktop screens */}
-    <div 
-      className="w-full   bg-white  shadow-lg overflow-hidden hidden sm:flex gap-2 flex-col lg:flex-row lg:h-[85vh]"
-    >
-      {/* Left Section */}
-      <div className="bg-gradient-to-br from-blue-700 to-indigo-800 p-12 flex flex-col justify-between relative text-white w-full lg:w-1/2 ">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute w-60 h-60 bg-white/10 rounded-full -top-20 -left-20 animate-pulse"></div>
-          <div className="absolute w-80 h-80 bg-white/5 rounded-full -bottom-20 -right-20 animate-pulse delay-500"></div>
-        </div>
+   {
+    loader? <Loader/> :  <div 
+    className="w-full   bg-white  shadow-lg overflow-hidden hidden sm:flex gap-2 flex-col lg:flex-row lg:h-[85vh]"
+  >
+    {/* Left Section */}
+    <div className="bg-gradient-to-br from-blue-700 to-indigo-800 p-12 flex flex-col justify-between relative text-white w-full lg:w-1/2 ">
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute w-60 h-60 bg-white/10 rounded-full -top-20 -left-20 animate-pulse"></div>
+        <div className="absolute w-80 h-80 bg-white/5 rounded-full -bottom-20 -right-20 animate-pulse delay-500"></div>
+      </div>
 
-        <div className="relative z-10">
-          <h1 className="text-3xl font-extrabold mb-4">Hungryrats</h1>
-          <p className="text-xl font-light mb-6">Revolutionizing Meal Experiences</p>
-          
-          <div className="bg-white/10 rounded-xl p-4 mb-6">
-            <div className="flex items-center mb-2">
-              <Gift className="mr-3 text-yellow-300" />
-              <h3 className="font-semibold">Exclusive Offer</h3>
-            </div>
-            <p className="text-sm">New subscribers get 30% off first month + free nutritionist consultation</p>
+      <div className="relative z-10">
+        <h1 className="text-3xl font-extrabold mb-4">Hungryrats</h1>
+        <p className="text-xl font-light mb-6">Revolutionizing Meal Experiences</p>
+        
+        <div className="bg-white/10 rounded-xl p-4 mb-6">
+          <div className="flex items-center mb-2">
+            <Gift className="mr-3 text-yellow-300" />
+            <h3 className="font-semibold">Exclusive Offer</h3>
           </div>
-        </div>
-
-        <div className="space-y-8 relative z-10">
-          <button
-            onClick={() => setActiveSection('meals')}
-            className={`
-              w-full flex items-center p-4 rounded-lg transition duration-300
-              ${
-                activeSection === 'meals'
-                  ? "bg-white text-indigo-700"
-                  : "bg-transparent text-white hover:bg-white/10"
-              }
-            `}
-          >
-            <Utensils className="w-8 h-8" />
-            <div className="ml-4 text-left">
-              <h3 className="text-xl font-semibold">Personalized Nutrition</h3>
-              <p className="text-sm font-light opacity-80">
-                Chef-curated meals tailored to your lifestyle
-              </p>
-              {activeSection === 'meals' && (
-                <div className="mt-2 space-y-1">
-                  <div className="flex items-center text-xs">
-                    <CheckCircle className="mr-2 w-4 h-4 text-green-400" />
-                    Macro-balanced recipes
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <LeafyGreen className="mr-2 w-4 h-4 text-green-400" />
-                    Multiple dietary preferences
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <Medal className="mr-2 w-4 h-4 text-green-400" />
-                    Nutritionist-approved meals
-                  </div>
-                </div>
-              )}
-            </div>
-          </button>
-
-          <button
-            onClick={() => setActiveSection('delivery')}
-            className={`
-              w-full flex items-center p-4 rounded-lg transition duration-300
-              ${
-                activeSection === 'delivery'
-                  ? "bg-white text-indigo-700"
-                  : "bg-transparent text-white hover:bg-white/10"
-              }
-            `}
-          >
-            <Truck className="w-8 h-8" />
-            <div className="ml-4 text-left">
-              <h3 className="text-xl font-semibold">Smart Delivery</h3>
-              <p className="text-sm font-light opacity-80">
-                Convenient, contactless meal solutions
-              </p>
-              {activeSection === 'delivery' && (
-                <div className="mt-2 space-y-1">
-                  <div className="flex items-center text-xs">
-                    <CheckCircle className="mr-2 w-4 h-4 text-green-400" />
-                    30-minute precise delivery
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <LeafyGreen className="mr-2 w-4 h-4 text-green-400" />
-                    Eco-friendly packaging
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <Medal className="mr-2 w-4 h-4 text-green-400" />
-                    Nationwide coverage
-                  </div>
-                </div>
-              )}
-            </div>
-          </button>
-
-          <button
-            onClick={() => setActiveSection('quality')}
-            className={`
-              w-full flex items-center p-4 rounded-lg transition duration-300
-              ${
-                activeSection === 'quality'
-                  ? "bg-white text-indigo-700"
-                  : "bg-transparent text-white hover:bg-white/10"
-              }
-            `}
-          >
-            <ShieldCheck className="w-8 h-8" />
-            <div className="ml-4 text-left">
-              <h3 className="text-xl font-semibold">Premium Quality</h3>
-              <p className="text-sm font-light opacity-80">
-                Ethically sourced, carefully prepared
-              </p>
-              {activeSection === 'quality' && (
-                <div className="mt-2 space-y-1">
-                  <div className="flex items-center text-xs">
-                    <CheckCircle className="mr-2 w-4 h-4 text-green-400" />
-                    Local farm partnerships
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <LeafyGreen className="mr-2 w-4 h-4 text-green-400" />
-                    Organic ingredient priority
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <Medal className="mr-2 w-4 h-4 text-green-400" />
-                    No artificial preservatives
-                  </div>
-                </div>
-              )}
-            </div>
-          </button>
-        </div>
-
-        <div className="relative z-10 mt-8 text-sm font-light opacity-70 flex justify-between items-center">
-          <p>© 2024 Hungryrats</p>
-          <div className="flex space-x-3">
-            <a href="#" className="hover:text-white/70">Privacy</a>
-            <a href="#" className="hover:text-white/70">Terms</a>
-          </div>
+          <p className="text-sm">New subscribers get 30% off first month + free nutritionist consultation</p>
         </div>
       </div>
 
-      {/* Right Section */}
-      <div className="p-12 bg-gray-50 flex flex-col justify-between overflow-y-auto w-full">
-        <div>
-          <h2 className="text-2xl font-bold text-center mb-8">Choose Your Subscription</h2>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3  gap-6">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:shadow-md transition-all"
-              >
-                {plan.icon}
-                <h2 className="text-xl font-bold mt-4 text-gray-800">
-                  {plan.name}
-                </h2>
-                <p className="text-3xl font-extrabold text-cyan-600 my-4">
-                  ${plan.price}
-                  <span className="text-sm text-gray-500 ml-2">/{`${plan.valid}`}</span>
-                </p>
-                <ul className="space-y-2 text-sm text-gray-600 mb-6">
-                  <li>{plan.meals} Prepared Meals</li>
-                  <li>Free Delivery</li>
-                  <li>Nutrition Consultation</li>
-                </ul>
-                <button className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition"onClick={()=>{handleSubscription(plan.price)}}>
-                  Select Plan
-                </button>
+      <div className="space-y-8 relative z-10">
+        <button
+          onClick={() => setActiveSection('meals')}
+          className={`
+            w-full flex items-center p-4 rounded-lg transition duration-300
+            ${
+              activeSection === 'meals'
+                ? "bg-white text-indigo-700"
+                : "bg-transparent text-white hover:bg-white/10"
+            }
+          `}
+        >
+          <Utensils className="w-8 h-8" />
+          <div className="ml-4 text-left">
+            <h3 className="text-xl font-semibold">Personalized Nutrition</h3>
+            <p className="text-sm font-light opacity-80">
+              Chef-curated meals tailored to your lifestyle
+            </p>
+            {activeSection === 'meals' && (
+              <div className="mt-2 space-y-1">
+                <div className="flex items-center text-xs">
+                  <CheckCircle className="mr-2 w-4 h-4 text-green-400" />
+                  Macro-balanced recipes
+                </div>
+                <div className="flex items-center text-xs">
+                  <LeafyGreen className="mr-2 w-4 h-4 text-green-400" />
+                  Multiple dietary preferences
+                </div>
+                <div className="flex items-center text-xs">
+                  <Medal className="mr-2 w-4 h-4 text-green-400" />
+                  Nutritionist-approved meals
+                </div>
               </div>
-            ))}
+            )}
           </div>
+        </button>
 
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            <div className="bg-cyan-50 p-4 rounded-lg flex items-center shadow-sm">
-              <Clock className="mr-3 text-cyan-500" />
-              <div>
-                <h4 className="font-semibold">30 min</h4>
-                <p className="text-sm text-gray-600">Delivery Time</p>
+        <button
+          onClick={() => setActiveSection('delivery')}
+          className={`
+            w-full flex items-center p-4 rounded-lg transition duration-300
+            ${
+              activeSection === 'delivery'
+                ? "bg-white text-indigo-700"
+                : "bg-transparent text-white hover:bg-white/10"
+            }
+          `}
+        >
+          <Truck className="w-8 h-8" />
+          <div className="ml-4 text-left">
+            <h3 className="text-xl font-semibold">Smart Delivery</h3>
+            <p className="text-sm font-light opacity-80">
+              Convenient, contactless meal solutions
+            </p>
+            {activeSection === 'delivery' && (
+              <div className="mt-2 space-y-1">
+                <div className="flex items-center text-xs">
+                  <CheckCircle className="mr-2 w-4 h-4 text-green-400" />
+                  30-minute precise delivery
+                </div>
+                <div className="flex items-center text-xs">
+                  <LeafyGreen className="mr-2 w-4 h-4 text-green-400" />
+                  Eco-friendly packaging
+                </div>
+                <div className="flex items-center text-xs">
+                  <Medal className="mr-2 w-4 h-4 text-green-400" />
+                  Nationwide coverage
+                </div>
               </div>
-            </div>
-
-            <div className="bg-green-50 p-4 rounded-lg flex items-center shadow-sm">
-              <Star className="mr-3 text-green-500" />
-              <div>
-                <h4 className="font-semibold">4.8</h4>
-                <p className="text-sm text-gray-600">Customer Rating</p>
-              </div>
-            </div>
+            )}
           </div>
+        </button>
+
+        <button
+          onClick={() => setActiveSection('quality')}
+          className={`
+            w-full flex items-center p-4 rounded-lg transition duration-300
+            ${
+              activeSection === 'quality'
+                ? "bg-white text-indigo-700"
+                : "bg-transparent text-white hover:bg-white/10"
+            }
+          `}
+        >
+          <ShieldCheck className="w-8 h-8" />
+          <div className="ml-4 text-left">
+            <h3 className="text-xl font-semibold">Premium Quality</h3>
+            <p className="text-sm font-light opacity-80">
+              Ethically sourced, carefully prepared
+            </p>
+            {activeSection === 'quality' && (
+              <div className="mt-2 space-y-1">
+                <div className="flex items-center text-xs">
+                  <CheckCircle className="mr-2 w-4 h-4 text-green-400" />
+                  Local farm partnerships
+                </div>
+                <div className="flex items-center text-xs">
+                  <LeafyGreen className="mr-2 w-4 h-4 text-green-400" />
+                  Organic ingredient priority
+                </div>
+                <div className="flex items-center text-xs">
+                  <Medal className="mr-2 w-4 h-4 text-green-400" />
+                  No artificial preservatives
+                </div>
+              </div>
+            )}
+          </div>
+        </button>
+      </div>
+
+      <div className="relative z-10 mt-8 text-sm font-light opacity-70 flex justify-between items-center">
+        <p>© 2024 Hungryrats</p>
+        <div className="flex space-x-3">
+          <a href="#" className="hover:text-white/70">Privacy</a>
+          <a href="#" className="hover:text-white/70">Terms</a>
         </div>
-        </div>
+      </div>
     </div>
+
+    {/* Right Section */}
+    <div className="p-12 bg-gray-50 flex flex-col justify-between overflow-y-auto w-full">
+      <div>
+        <h2 className="text-2xl font-bold text-center mb-8">Choose Your Subscription</h2>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-3  gap-6">
+          {plans.map((plan) => (
+            <div
+              key={plan.name}
+              className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:shadow-md transition-all"
+            >
+              {plan.icon}
+              <h2 className="text-xl font-bold mt-4 text-gray-800">
+                {plan.name}
+              </h2>
+              <p className="text-3xl font-extrabold text-cyan-600 my-4">
+                ${plan.price}
+                <span className="text-sm text-gray-500 ml-2">/{`${plan.valid}`}</span>
+              </p>
+              <ul className="space-y-2 text-sm text-gray-600 mb-6">
+                <li>{plan.meals} Prepared Meals</li>
+                <li>Free Delivery</li>
+                <li>Nutrition Consultation</li>
+              </ul>
+              <button className="w-full bg-cyan-500 text-white py-3 rounded-lg hover:bg-cyan-600 transition"onClick={()=>{handleSubscription(plan.price)}}>
+                Select Plan
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mt-8">
+          <div className="bg-cyan-50 p-4 rounded-lg flex items-center shadow-sm">
+            <Clock className="mr-3 text-cyan-500" />
+            <div>
+              <h4 className="font-semibold">30 min</h4>
+              <p className="text-sm text-gray-600">Delivery Time</p>
+            </div>
+          </div>
+
+          <div className="bg-green-50 p-4 rounded-lg flex items-center shadow-sm">
+            <Star className="mr-3 text-green-500" />
+            <div>
+              <h4 className="font-semibold">4.8</h4>
+              <p className="text-sm text-gray-600">Customer Rating</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+  </div>
+   }
 
     <Footer/>
 
@@ -602,7 +652,7 @@ const page = () => {
               {/* Sidebars and Popups */}
 
   
-    <div className={`absolute flex justify-center top-0 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
+    <div className={`absolute flex justify-center top-0 items-center bg-black/20 backdrop-blur-0 h-[120vh] md:h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
     <Loginpopup hideloginpopup={hideLoginpopup} popup={popup} />
     </div>
 
@@ -700,6 +750,7 @@ const page = () => {
                   : 'bg-gray-400 cursor-not-allowed'
                 }`}
               disabled={!isSubscriptionActive}
+              onClick={placedOrder}
             >
               {isSubscriptionActive ? 'Order Now' : 'Activate Subscription'}
             </button>

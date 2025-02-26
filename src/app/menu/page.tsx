@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import Product from '@/Components/AddProduct/Product';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import Loader from '@/Components/Loader/Loader';
 
 interface CartData{
   productimage: string;
@@ -49,6 +50,7 @@ const Page = () => {
   const router = useRouter();
 
    const [cartsidebar,setcartSidebar] = useState(false);
+   const [spin,setspin] = useState(true);
   const [isSubscriptionActive, setIsSubscriptionActive] = useState(false);
   const { getproducts } = useSelector((state: RootState) => state.User) as { getproducts: GetProductsResponse };
   const { getcart } = useSelector((state: RootState) => state.User) as { getcart: CartData[] };
@@ -58,7 +60,7 @@ const Page = () => {
   const { deletecart } = useSelector((state:RootState)=>state.User)
       // console.log("userverify",userverify);
 
-      console.log(getcart);
+      // console.log(getcart);
       
 
       
@@ -72,12 +74,16 @@ const Page = () => {
   // console.log(getproducts);
 
    const menu = getproducts?.[0]?.filter((foodItem:any,index:number)=>{
-        if(index > 2){
           return foodItem
-        }
    })
 
    const placedOrder = ()=>{
+
+
+     if(getcart?.[0] == null){
+      return toast.error("Cart is empty");
+     }
+
     let Firstname =  userverify?.[0]?.[0]?.Firstname;
     let mobile =  userverify?.[0]?.[0]?.mobile;
     let productname = getcart?.[0]?.productname;
@@ -114,12 +120,12 @@ const Page = () => {
       setloginpopup(true)
     }else{
       let userid = userverify?.[0]?.[0]?._id;
-      console.log(userid);
+      // console.log(userid);
    
       dispatch(CheckSubscription(userid)).then((res)=>{
-        console.log(res);
+        // console.log(res);
 
-        console.log(subscription);
+        // console.log(subscription);
         
         if(res.payload == "Not Subscribed"){
          return router.push("/subscription");
@@ -151,10 +157,10 @@ const Page = () => {
 
          const getData = ()=>{
           let datas = userverify?.[0]?.[0]?._id
-          console.log(datas);
+          // console.log(datas);
           dispatch(CheckSubscription(datas)).then((res)=>{
-           console.log(res);
-           console.log(subscription);             
+          //  console.log(res);
+          //  console.log(subscription);             
          })
  
           if(userverify?.[0] == undefined  ){
@@ -162,8 +168,8 @@ const Page = () => {
        }else{
          let userid = userverify?.[0]?.[0]?._id
          dispatch(CheckSubscription(userid)).then((res)=>{
-           console.log(res);
-           console.log(subscription);
+          //  console.log(res);
+          //  console.log(subscription);
            
            if(res.payload === "Not Subscribed" || res.payload == undefined){
             setIsSubscriptionActive(false);
@@ -181,42 +187,12 @@ const Page = () => {
 
    useEffect(()=> {
     getData();
+    if(getcart?.[0] !== undefined){
+       setspin(false);
+    }
    },[userverify,deletecart])
 
   
-
-
-
-    const menuItems = [
-        {
-          id: 1,
-          name: 'Gourmet Burger',
-          description: 'Premium beef, truffle aioli, caramelized onions',
-          originalPrice: 18.99,
-          price: 14.99,
-          rating: 4.7,
-          image: 'https://img.freepik.com/free-photo/front-view-burger-stand_141793-15542.jpg'
-        },
-        {
-          id: 2,
-          name: 'Artisan Pizza',
-          description: 'San Marzano tomatoes, fresh mozzarella, basil',
-          originalPrice: 22.50,
-          price: 16.50,
-          rating: 4.8,
-          image: 'https://img.freepik.com/free-photo/pizza-pizza-filled-with-various-ingredients_141793-2589.jpg'
-        },
-        {
-          id: 3,
-          name: 'Salmon Poke Bowl',
-          description: 'Fresh salmon, quinoa, avocado, sesame dressing',
-          originalPrice: 24.99,
-          price: 18.99,
-          rating: 4.6,
-          image: 'https://img.freepik.com/free-photo/hawaiian-poke-bowl-with-salmon_1150-42773.jpg'
-        }
-      ];
-    
       const [showloginpopup,setloginpopup] = useState(false);
       const [showsignuppopup,setsignuppopup] = useState(false);
       const [popup,setpopup] = useState("signup")
@@ -247,7 +223,8 @@ const Page = () => {
   return (
     <>
     <Header Showpopup={handleLoginpopup} Showsignup={handleSignuppopup} msg={true} cartsidebar={handlecartSidebar}/>
-    <div className='min-h-screen w-full'>
+   {
+    spin? <Loader/> :    <div className='min-h-screen w-full'>
     <div className="menu  h-auto mb-2 lg:h-[80vh] flex justify-center items-center">
     <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-10">
@@ -278,8 +255,8 @@ const Page = () => {
                 <p className="text-sm md:text-lg text-blue-700 mb-4">{item.description}</p>
                 <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                    <span className=" text-lg md:text-xl animate-pulse font-extrabold text-blue-600 mr-3">${item.price}</span>
-                    <span className="text-sm md:text-lg text-gray-400 line-through">${item.subprice}</span>
+                    <span className=" text-lg md:text-xl animate-pulse font-extrabold text-blue-600 mr-3">Rs{item.price}</span>
+                    <span className="text-sm md:text-lg text-gray-400 line-through">Rs{item.subprice}</span>
                   </div>
                   <button className="bg-blue-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl hover:bg-blue-700 transition-colors font-semibold" onClick={()=>{handleOrder(item)}}>
                     Add to Cart
@@ -292,6 +269,7 @@ const Page = () => {
       </div>
     </div>
 </div>
+   }
 
 
 

@@ -30,7 +30,7 @@ const page = () => {
         let data = {
             userid:userverify?.[0]?.[0]?._id,
             username:userverify?.[0]?.[0]?.Firstname,
-            days:24
+            days:58
         }
 
         dispatch(Subscribe(data))

@@ -82,7 +82,7 @@ export const Register = createAsyncThunk("register", async (data: Data) => {
       toast.error(response.response.data.error)
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
 
   }
 })
@@ -306,7 +306,7 @@ export const PostOrder = createAsyncThunk("createorder",async(data:any)=>{
       toast.success("Order is placed");
       return response.data
     }else{
-      console.log(response);
+      // console.log(response);
       return response.data
       
     }
@@ -322,7 +322,7 @@ export const getUsers = createAsyncThunk("getallusers",async()=>{
       return response.data
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     
   }
 })

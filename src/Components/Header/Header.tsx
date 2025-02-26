@@ -403,7 +403,8 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
 
             {/* Floating Order Cards */}
             <div className="absolute top-1/4 -left-12 bg-white p-4 rounded-xl shadow-xl animate-float delay-100">
-              <div className="flex items-center gap-3">
+             <Link href={"/menu"}>
+             <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-orange-100 rounded-lg">
                   <img src={data?.[0]?.productimage} alt="product" className='h-full'/>
                 </div>
@@ -412,18 +413,23 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
                   <div className="text-sm text-gray-500">Rs {data?.[0]?.price}</div>
                 </div>
               </div>
+             
+             </Link>
             </div>
 
             <div className="absolute bottom-1/4 -right-8 bg-white p-4 rounded-xl shadow-xl animate-float delay-200">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-green-100 rounded-lg">
-                <img src={data?.[1]?.productimage} alt="product" className='h-full'/>
+            <Link href={"/menu"}>
+             <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-orange-100 rounded-lg">
+                  <img src={data?.[1]?.productimage} alt="product" className='h-full'/>
                 </div>
                 <div>
-                <div className="font-medium text-gray-900">{data?.[1]?.productname}</div>
-                <div className="text-sm text-gray-500">Rs {data?.[1]?.price}</div>
+                  <div className="font-medium text-gray-900">{data?.[1]?.productname}</div>
+                  <div className="text-sm text-gray-500">Rs {data?.[1]?.price}</div>
                 </div>
               </div>
+             
+             </Link>
             </div>
           </div>
 

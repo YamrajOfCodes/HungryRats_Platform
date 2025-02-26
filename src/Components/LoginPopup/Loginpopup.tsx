@@ -215,7 +215,8 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors hover:cursor-not-allowed"
+                  disabled
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -239,7 +240,8 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
                 </button>
                 <button
                   type="button"
-                  className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center py-2 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors hover:cursor-not-allowed"
+                  disabled
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path

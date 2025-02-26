@@ -33,7 +33,7 @@ const Product = () => {
     reader.readAsDataURL(file);
 
     // Log the file directly instead of the state
-    console.log('Selected image file:', file);
+    // console.log('Selected image file:', file);
   };
 
   const handleRemoveImage = () => {

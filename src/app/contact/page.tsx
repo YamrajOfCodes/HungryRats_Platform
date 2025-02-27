@@ -34,11 +34,8 @@ interface User {
 
 type UserVerifyResponse = User[][]// Array containing arrays of User objects
 
-interface Data{
-  dataa:string
-}
 
- const page : React.FC<Data> = ({dataa}) => {
+ const page  = () => {
   
       const router = useRouter();
  

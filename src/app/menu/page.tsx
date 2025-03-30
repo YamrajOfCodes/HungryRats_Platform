@@ -224,7 +224,7 @@ const Page = () => {
     <>
     <Header Showpopup={handleLoginpopup} Showsignup={handleSignuppopup} msg={true} cartsidebar={handlecartSidebar}/>
    {
-    spin? <Loader/> :    <div className='min-h-screen w-4/5 flex mx-auto'>
+    spin? <Loader/> :    <div className='min-h-screen w-full'>
     <div className="menu  h-auto mb-2  flex justify-center items-center">
     <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-10">

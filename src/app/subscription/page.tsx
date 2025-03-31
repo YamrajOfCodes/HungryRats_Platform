@@ -263,20 +263,20 @@ const page = () => {
           const handleLoginpopup = (e:any)=>{
             setpopup("login")
             setloginpopup(true);
-              document.body.classList.add('overflow-hidden');
+             
           }
         
           const handleSignuppopup = ()=>{
             setpopup("signup")
             setsignuppopup(true);
-              document.body.classList.add('overflow-hidden');
+             
           }
         
         
           const hideLoginpopup = ()=>{
             setloginpopup(false);
             setsignuppopup(false)
-              document.body.classList.remove('overflow-hidden');
+             
           }
 
        

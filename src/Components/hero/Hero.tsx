@@ -235,7 +235,7 @@ const Hero = () => {
 
       <div className="work mt-10 px-2">
         <div className="flex justify-center items-center gap-3 py-12">
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-800">
+          <h2 className="text-xl md:text-4xl font-bold text-gray-800">
             Work with
           </h2>
           <div className="relative">
@@ -267,7 +267,7 @@ const Hero = () => {
           </div>
         </div>
         <hr className='bg-black' />
-        <div className="w-full p-6 space-y-8 lg:hidden">
+        <div className="w-full p-4 space-y-8 lg:hidden">
       {sections.map((section, index) => (
         <div
           key={index}
@@ -284,7 +284,7 @@ const Hero = () => {
               <h2 className="text-2xl font-bold text-gray-800">{section.title}</h2>
               <p className="text-gray-600 leading-relaxed">{section.description}</p>
               
-              <button onClick={()=>{handlenavigate(section.buttonText)}} className="inline-flex items-center gap-2 px-6 py-3 mt-4 bg-gray-900 text-white rounded-full font-semibold transition-colors hover:bg-gray-800">
+              <button onClick={()=>{handlenavigate(section.buttonText)}} className="inline-flex items-center gap-2 px-4 py-2 mt-4 bg-gray-900 text-white rounded-full font-semibold transition-colors hover:bg-gray-800">
                 {section.buttonText}
                 <ArrowRight className="w-4 h-4" />
               </button>

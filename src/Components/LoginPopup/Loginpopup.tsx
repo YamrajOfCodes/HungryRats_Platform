@@ -5,6 +5,7 @@ import {
     Utensils, 
     Eye, 
     EyeOff, 
+    X
   } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Login, Register } from '@/Redux/Slices/User/userSlice'
@@ -87,7 +88,7 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
 
         e.preventDefault();
   
-         const {Firstname,Lastname,email,password,confirmpassword,mobile,address} = formData
+         const {Firstname,Lastname,email,password,mobile,address} = formData
   
           const data =  new FormData();
           data.append("Firstname",Firstname);
@@ -96,7 +97,6 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
           data.append("mobile",mobile);
           data.append("address",address);
           data.append("password",password);
-          data.append("confirmpassword",confirmpassword);
   
           const config = {
               "Content-Type":"multipart/formdata"
@@ -112,7 +112,7 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
   
              dispatch(Register(formData)).then((res)=>{
               if(res.payload){
-                setFormData({...formData,Firstname:"",Lastname:"",email:"",mobile:"",password:"",confirmpassword:"",address:""});
+                setFormData({...formData,Firstname:"",Lastname:"",email:"",mobile:"",password:"",address:""});
                 toast.success("Registration is successfull")
                 setactive("login")
               }
@@ -128,7 +128,7 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
        <>
         <div className={`min-h-screen  flex items-center justify-center p-4 w-full ${ active == "login"? "block" : "hidden"} `}>
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8" onClick={handlePropogation}>
-              <p className='text-end cursor-pointer'onClick={hideloginpopup}>X</p> 
+          <p className='flex justify-end cursor-pointer'><X onClick={hideloginpopup}/></p> 
             <div className="text-center mb-8">
               <div className="flex justify-center space-x-3 mb-4">
                 <div className="bg-blue-100 p-3 rounded-full">
@@ -267,7 +267,7 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
 
   <div className={`min-h-screen flex items-center justify-center p-4 w-full  ${popup == "signup"? "block" : "hidden"} ${active == "login"? 'hidden' : 'block'} `}>
       <div className="bg-white rounded-lg shadow-xl w-full sm:w-2/3 lg:1/2  xl:w-5/12 2xl:w-1/3 p-8" onClick={handlePropogation}>
-          <p className='text-end cursor-pointer'onClick={hideloginpopup}>X</p> 
+      <p className='flex justify-end cursor-pointer'><X onClick={hideloginpopup}/></p> 
         <div className="text-center mb-8">
           <div className="flex justify-center space-x-3 mb-4">
             <div className="bg-blue-100 p-3 rounded-full">
@@ -385,29 +385,7 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmpassword"
-                value={formData.confirmpassword}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
-                placeholder="Confirm your password"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
-              >
-                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
+          
 
           <button
             type="submit"

@@ -191,7 +191,7 @@ const page = () => {
       loader?<Loader/> : <Hero/>
     }
     <Footer/>
-    <div className={`absolute flex justify-center top-0 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
+    <div className={`fixed flex justify-center top-0 left-0 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
     <Loginpopup popup={popup} hideloginpopup={hideLoginpopup} />
     </div>
 

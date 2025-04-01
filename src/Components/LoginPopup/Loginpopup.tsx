@@ -266,7 +266,7 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
 
 
   <div className={`min-h-screen flex items-center justify-center p-4 w-full  ${popup == "signup"? "block" : "hidden"} ${active == "login"? 'hidden' : 'block'} `}>
-      <div className="bg-white rounded-lg shadow-xl w-full sm:w-2/3 lg:1/2  xl:w-5/12 2xl:w-1/3 p-8" onClick={handlePropogation}>
+      <div className="bg-white rounded-lg shadow-xl w-full  sm:w-2/3 lg:1/2  xl:w-5/12 2xl:w-1/3 p-8" onClick={handlePropogation}>
       <p className='flex justify-end cursor-pointer'><X onClick={hideloginpopup}/></p> 
         <div className="text-center mb-8">
           <div className="flex justify-center space-x-3 mb-4">
@@ -278,7 +278,7 @@ const Loginpopup : React.FC<Popup> = ({popup,hideloginpopup}) => {
             </div>
           </div>
           <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
-          <p className="text-gray-500 mt-2">Sign up to start ordering your favorite meals</p>
+
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

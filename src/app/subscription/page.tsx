@@ -660,7 +660,7 @@ const page = () => {
     {/* CartSidebar */}
      <div 
           className={`fixed right-0 top-0 bg-white sidebar h-screen w-[420px] 
-            ${cartsidebar ? "translate-x-0" : "translate-x-full"} 
+            ${cartsidebar ? "translate-x-4" : "translate-x-full"} 
             transition-transform duration-500 ease-in-out z-50 
             border-l-4 border-blue-500 shadow-2xl`}
         >

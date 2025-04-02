@@ -351,7 +351,7 @@ const SubscriptionFlow = () => {
 
 
 
-      <div className={`absolute flex justify-center -top-4 items-center bg-black/20 backdrop-blur-0 h-screen w-full z-10 ${showsignuppopup ? 'block' : 'hidden'}`} onClick={hideLoginpopup}>
+      <div className={`absolute flex justify-center -top-10 items-center bg-black/20 backdrop-blur-0 h-[110vh] w-full z-10 ${showsignuppopup ? 'block' : 'hidden'}`} onClick={hideLoginpopup}>
         <Loginpopup popup={popup} hideloginpopup={hideLoginpopup} />
       </div>
 

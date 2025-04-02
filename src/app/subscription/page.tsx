@@ -652,7 +652,7 @@ const page = () => {
               {/* Sidebars and Popups */}
 
   
-    <div className={`fixed -top-5 left-0 h-[120vh] backdrop-blur-sm bg-black/20 z-10 w-[100vw] ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
+    <div className={`fixed -top-10 left-0 h-[120vh] backdrop-blur-sm bg-black/20 z-10 w-[100vw] ${showsignuppopup?'block':'hidden'}`} onClick={hideLoginpopup}>
     <Loginpopup hideloginpopup={hideLoginpopup} popup={popup} />
     </div>
 

@@ -93,7 +93,7 @@ const Dashboard = () => {
 
 const handleDeleteProduct = (id:any)=>{
 
-  console.log(id)
+  
   
   dispatch(deleteProduct(id)).then((res)=>{
    if(res.payload){

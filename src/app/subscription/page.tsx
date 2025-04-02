@@ -583,7 +583,7 @@ const page = () => {
       </div>
 
       <div className="relative z-10 mt-8 text-sm font-light opacity-70 flex justify-between items-center">
-        <p>© 2024 Hungryrats</p>
+        <p>© 2025 Hungryrats</p>
         <div className="flex space-x-3">
           <a href="#" className="hover:text-white/70">Privacy</a>
           <a href="#" className="hover:text-white/70">Terms</a>

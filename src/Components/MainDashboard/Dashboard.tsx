@@ -29,6 +29,7 @@ const Dashboard = () => {
   const {getorders} = useSelector((state:RootState)=>state.User as {getorders : UserVerifyResponse[]} );
 
 
+
   // console.log(getorders);
 
 
@@ -76,6 +77,9 @@ const Dashboard = () => {
 
 
  const handleDeleteOrder = (id:any)=>{
+
+  console.log(id);
+  
   
   dispatch(deleteOrder(id)).then((res)=>{
    if(res.payload){
@@ -88,6 +92,8 @@ const Dashboard = () => {
 
 
 const handleDeleteProduct = (id:any)=>{
+
+  console.log(id)
   
   dispatch(deleteProduct(id)).then((res)=>{
    if(res.payload){
@@ -261,7 +267,8 @@ const handleDeleteProduct = (id:any)=>{
                   <td className="px-6 py-4 whitespace-nowrap text-right">
                     {order.status === 'pending' && (
                       <button
-                        onClick={() => handleDeleteOrder(order.id)}
+                        onClick={() => {handleDeleteOrder(order.id);
+                        }}
                         className="text-sm bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
                       >
                         Complete

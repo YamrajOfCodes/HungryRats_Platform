@@ -352,7 +352,7 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
             Experience quick, reliable food delivery from your favorite local restaurants. Perfect for busy hostel life!
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-           <button className="bg-yellow-400 w-2/3 md:w-2/3 lg:w-1/3 xl:w-1/4 flex  text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-all hover:scale-105 flex items-center justify-center gap-2 group">
+           <button className="bg-yellow-400 w-2/3 md:w-2/3 lg:w-1/3 xl:w-1/4  text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-all hover:scale-105 flex items-center justify-center gap-2 group">
            <Link href={"/menu"}>
               Order Now
            </Link>

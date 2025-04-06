@@ -232,7 +232,7 @@ const Header:React.FC<Functions>  = ({Showpopup,Showsignup,msg,cartsidebar}) => 
       </nav>
 
 
-      <header className={`relative w-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 overflow-hidden h-[60vh] md:h-[70vh] ${msg == false? 'block' : 'hidden'} `}>
+      <header className={`relative w-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-500 overflow-hidden h-[60vh] md:h-[80vh] ${msg == false? 'block' : 'hidden'} `}>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute h-32 w-32 -left-16 -top-16 bg-white rounded-full animate-pulse"></div>

@@ -50,14 +50,6 @@ export const metadata: Metadata = {
       "Subscription-based food delivery service designed for hostelers. Get tasty, affordable meals delivered right to your hostel door.",
     url: "https://www.hungryrats.in",
     siteName: "Hungryrats",
-    // images: [
-    //   {
-    //     url: "/images/og-image.jpg",
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "Hungryrats Food Delivery",
-    //   },
-    // ],
     locale: "en_US",
     type: "website",
   },
@@ -79,7 +71,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-
 };
 
 // Viewport configuration for responsiveness
@@ -98,9 +89,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" dir="ltr">
-      <head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-background text-foreground`}>
+        {/* Font preconnects */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Schema.org data */}
         <Script
           id="schema-org"
           type="application/ld+json"
@@ -110,7 +104,6 @@ export default function RootLayout({
               "@type": "Organization",
               name: "Hungryrats",
               url: "https://www.hungryrats.in",
-         
               contactPoint: {
                 "@type": "ContactPoint",
                 telephone: "+919960322509",
@@ -126,7 +119,7 @@ export default function RootLayout({
           }}
         />
         
-        {/* Optional Analytics Script */}
+        {/* Analytics Scripts */}
         <Script
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"
@@ -139,8 +132,7 @@ export default function RootLayout({
             gtag('config', 'G-XXXXXXXX');
           `}
         </Script>
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-background text-foreground`}>
+        
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

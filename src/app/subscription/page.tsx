@@ -412,7 +412,7 @@ const page = () => {
               <h2 className="text-xl font-bold mt-4 mb-2 text-black">{plan.name}</h2>
               <p className="text-2xl font-extrabold text-cyan-400 mb-4 flex items-center justify-center">
                   <IndianRupee className="w-6 h-6 mr-1" />
-                  {plan.price}
+                  {`${plan.price}`}
                 </p>
               <ul className="space-y-2 mb-6 text-white/70">
                 <li className='text-black'>{plan.meals} Prepared Meals</li>
@@ -607,7 +607,7 @@ const page = () => {
                 {plan.name}
               </h2>
               <p className="text-3xl font-extrabold text-cyan-600 my-4">
-                ${plan.price}
+              ₹{plan.price}
                 <span className="text-sm text-gray-500 ml-2">/{`${plan.valid}`}</span>
               </p>
               <ul className="space-y-2 text-sm text-gray-600 mb-6">
